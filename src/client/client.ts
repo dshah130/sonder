@@ -65,7 +65,10 @@ export function signClientIn(){
       MyCharacterElement.innerText = playerUID
 
       gameCanvas?.appendChild(MyCharacterElement)
-      
+      const container = document.getElementById('GameID');
+      container!.innerHTML = "Your Online ID" + playerUID
+      //container!.appendChild(MyCharacterElement)
+
       } else {
           // User is signed out
           // ...

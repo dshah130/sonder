@@ -29,8 +29,6 @@ function loadPage() {
             .then(response => response.text())
             .then(html => {
                 document.body.innerHTML = html;
-                //const container = document.getElementById('container');
-                //container!.innerHTML = html
             })
             .catch(error => {
                 console.error('Failed to load profile.html:', error);
