@@ -1,23 +1,16 @@
-
 //Firebase
 import {signInAnonymously, onAuthStateChanged} from '@firebase/auth'
 import {auth, firestore} from "../firebase/firebase";
 import {handleDataBaseConnection, getPlayerConnectionRef} from '../handler/firebaseDatabaseHandler';
-import { doc, onSnapshot } from "firebase/firestore";
 
 //Enum
-import { Player } from '../interfaces/player';
+import { Player } from '../interfaces/interface';
 
 //Handlers
 import { printErrorMsg } from '../handler/errorHandler';
 import { updatePlayerRef, getPlayerRef } from '../handler/firestoreHandler';
-
 import { initGame } from "../client/game";
-
-
-
-
-
+import { assignMBTIToPlayer } from "../handler/playerTypes"
 
 //Sign Client in
 export function signClientIn(){
@@ -26,15 +19,15 @@ export function signClientIn(){
     let playerUID:string = '';
     let playerRef:any = ''; 
     let playerElements: any =  {};
-    const  gameCanvas = document.querySelector(".canvas");
+    const gameCanvas = document.querySelector(".canvas");
 
     onAuthStateChanged(auth, (user) => {
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/auth.user
       playerUID = user.uid;
-    
-          // Example usage:
+      
+      assignMBTIToPlayer(user.uid).then((assignedType) => {
       const player: Player = {
         UID: playerUID,
         level: 0,
@@ -42,16 +35,20 @@ export function signClientIn(){
         SL: 0,
         IE: 0,
         IL: 0,
-        type: 'ENFP'
+        type: assignedType
       };
-    
+
       updatePlayerRef(user.uid, player);
     
       //Live update to player ref state if change is made
       playerRef = getPlayerConnectionRef(user.uid);
 
       handleDataBaseConnection(user.uid)
-      
+
+      }).catch(error => {
+        console.error("Error assigning MBTI type: ", error);
+      });
+
       const MyCharacterElement = document.createElement("div") as HTMLDivElement;
       MyCharacterElement.classList.add("Character")
       MyCharacterElement.classList.add("you")
@@ -71,7 +68,6 @@ export function signClientIn(){
 
       } else {
           // User is signed out
-          // ...
           console.log('User is signed out');
       }
     });
@@ -87,16 +83,4 @@ export function signClientIn(){
     function initClient(){
       initGame();
     }
-
 }
-
-
-
-
-
-
-
-
-
-
-

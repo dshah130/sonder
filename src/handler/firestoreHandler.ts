@@ -1,7 +1,7 @@
  import {firestore } from "../firebase/firebase";
  import firebaseApp from "../firebase/firebase";
  import { doc, setDoc, onSnapshot } from "firebase/firestore";
-import { Player } from "../interfaces/player";
+ import { Player } from "../interfaces/interface";
 
  export function updatePlayerRef(uid:string, playerStateUpdate:any):void{
     setDoc(doc(firestore,'players', uid), playerStateUpdate);
@@ -55,4 +55,3 @@ import { Player } from "../interfaces/player";
 //        return null;
 //    }
 //  }
- 
