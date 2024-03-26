@@ -29,13 +29,16 @@ export function signClientIn(){
       
       assignMBTIToPlayer(user.uid).then((assignedType) => {
       const player: Player = {
+        Type: assignedType,
         UID: playerUID,
-        level: 0,
+        Health: 5,
+        Damage: 0,
         SE: 0,
         SL: 0,
         IE: 0,
         IL: 0,
-        type: assignedType
+        Level: 0,
+        decisionTimer: 3
       };
 
       updatePlayerRef(user.uid, player);
