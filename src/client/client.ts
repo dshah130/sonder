@@ -52,22 +52,22 @@ export function signClientIn(){
         console.error("Error assigning MBTI type: ", error);
       });
 
-      const MyCharacterElement = document.createElement("div") as HTMLDivElement;
-      MyCharacterElement.classList.add("Character")
-      MyCharacterElement.classList.add("you")
-      MyCharacterElement.innerHTML = (`
-      <div class="Character_container">
-        <span class="Character_UID"><span>
-      </div>
-      `)
+      // const MyCharacterElement = document.createElement("div") as HTMLDivElement;
+      // MyCharacterElement.classList.add("Character")
+      // MyCharacterElement.classList.add("you")
+      // MyCharacterElement.innerHTML = (`
+      // <div class="Character_container">
+      //   <span class="Character_UID"><span>
+      // </div>
+      // `)
 
-      playerElements[user.uid] = MyCharacterElement; 
-      MyCharacterElement.innerText = playerUID
+      // playerElements[user.uid] = MyCharacterElement; 
+      // MyCharacterElement.innerText = playerUID
 
-      gameCanvas?.appendChild(MyCharacterElement)
-      const container = document.getElementById('GameID');
-      container!.innerHTML = "Your Online ID" + playerUID
-      //container!.appendChild(MyCharacterElement)
+      // gameCanvas?.appendChild(MyCharacterElement)
+      // const container = document.getElementById('GameID');
+      // container!.innerHTML = "Your Online ID" + playerUID
+      // //container!.appendChild(MyCharacterElement)
 
       } else {
           // User is signed out

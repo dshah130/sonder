@@ -9,7 +9,7 @@ import {printErrorMsg} from  "../src/handler/errorHandler";
 // Function to load the appropriate HTML page based on the URL
 function loadPage() {
     const path:string = window.location.pathname;
-    if (path === '/game/') {
+    if (path === '/game/index.html') {
         // Load game.html
         fetch('/game/index.html')
             .then(response => response.text())
