@@ -37,37 +37,37 @@ function setupUIListeners() {
     }
     
     document.getElementById('healOwnButton')?.addEventListener('click', () => {
-        const currentPlayerUID = "YOUR_PLAYER_UID";
+        const currentPlayerUID = "sOfGRUQ6xda7zZh3icfuH1y3uS52";
         healOwnPlayer(currentPlayerUID);
     });
 
     document.getElementById('damageButton')?.addEventListener('click', () => {
-        const targetPlayerUID = "TARGET_PLAYER_UID"; 
+        const targetPlayerUID = "crGfXYIFp4OyDJmyxzy9YlkeRoS2"; 
         damagePlayer(targetPlayerUID);
     });
 
     document.getElementById('decreaseTimerButton')?.addEventListener('click', () => {
-        const targetPlayerUID = "TARGET_PLAYER_UID";
+        const targetPlayerUID = "crGfXYIFp4OyDJmyxzy9YlkeRoS2";
         decreaseDecisionTimer(targetPlayerUID);
     });
 
     document.getElementById('increaseTimerButton')?.addEventListener('click', () => {
-        const currentPlayerUID = "YOUR_PLAYER_UID";
+        const currentPlayerUID = "sOfGRUQ6xda7zZh3icfuH1y3uS52";
         increaseDecisionTimer(currentPlayerUID);
     });
 
     document.getElementById('lowerStatsButton')?.addEventListener('click', () => {
-        const targetPlayerUID = "TARGET_PLAYER_UID";
+        const targetPlayerUID = "crGfXYIFp4OyDJmyxzy9YlkeRoS2";
         lowerPlayerStats(targetPlayerUID);
     });
 
     document.getElementById('raiseStatsButton')?.addEventListener('click', () => {
-        const targetPlayerUID = "TARGET_PLAYER_UID";
+        const targetPlayerUID = "crGfXYIFp4OyDJmyxzy9YlkeRoS2";
         raisePlayerStats(targetPlayerUID);
     });
 
     document.getElementById('blockButton')?.addEventListener('click', () => {
-        const currentPlayerUID = "YOUR_PLAYER_UID";
+        const currentPlayerUID = "sOfGRUQ6xda7zZh3icfuH1y3uS52";
         setBlockForNextTurn(currentPlayerUID);
     });
 }
