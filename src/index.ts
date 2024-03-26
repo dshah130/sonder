@@ -1,6 +1,6 @@
 console.log('Hello, TypeScript and Webpack!');
 
-import { signClientIn } from "../src/client/client";
+import { signClientIn, initClient } from "../src/client/client";
 import { initGame } from "../src/client/game";
 import {printErrorMsg} from  "../src/handler/errorHandler";
 
@@ -46,7 +46,7 @@ function loadPage() {
 
 //initial run of game
 (function(){
-    signClientIn();
+    initClient();
     loadPage();
 })();
 
