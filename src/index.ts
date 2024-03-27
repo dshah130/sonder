@@ -1,14 +1,12 @@
 console.log('Hello, TypeScript and Webpack!');
 
-import { signClientIn, initClient } from "../src/client/client";
+import { initClient } from "../src/client/client";
 import { initGame } from "../src/client/game";
-import {printErrorMsg} from  "../src/handler/errorHandler";
-
-// index.ts
+import { printErrorMsg } from "../src/handler/errorHandler";
 
 // Function to load the appropriate HTML page based on the URL
 function loadPage() {
-    const path:string = window.location.pathname;
+    const path: string = window.location.pathname;
     if (path === '/game/index.html') {
         // Load game.html
         fetch('/game/index.html')
@@ -37,18 +35,10 @@ function loadPage() {
     } else {
         console.error('Invalid URL:', path);
     }
-
 }
 
-
-
-
-
 //initial run of game
-(function(){
+(function () {
     initClient();
     loadPage();
 })();
-
-
-
