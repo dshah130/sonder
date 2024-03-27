@@ -11,9 +11,9 @@ import { printErrorMsg } from '../handler/errorHandler';
 import { updatePlayerRef, getPlayerRef } from '../handler/firestoreHandler';
 import { initGame } from "../client/game";
 import { assignMBTIToPlayer } from "../handler/playerTypes"
+import { updateDropdown } from '../client/game';
 
 export const MyPlayer:Player = BaseStatsPlayer;
-
 
 //Sign Client in
 export function signClientIn(){
@@ -100,24 +100,26 @@ function signInClient(){
 
 }
 
-export function initClient(){
-
+export function initClient() {
   signInClient();
 
+  // After successful sign-in
+  onAuthStateChanged(auth, (user) => {
+      if(user) {
+          console.log(user.uid);
+          createConnection(user.uid); // Assuming createConnection sets up the necessary Firebase real-time database connections
 
-//========CREATE CONNECTION
-onAuthStateChanged(auth, (user) => {
-
-  //if user is found
-  if(user){
-    console.log(user.uid)
-    const ref = createConnection(user.uid);
-    console.log(ref)
-    getPlayerConnectionList()
-  }
-});
-
-//========READ=> OWN STATS
-
-//========READ=> ALL OTHER PLAYERS
+          // Now fetch and use the player connections list
+          getPlayerConnectionList((playersList) => {
+              // Here, you have access to the updated players list
+              console.log("Players connected:", playersList);
+              updateDropdown(playersList);
+              // You can now do something with this list, like displaying it in the UI or making game-related decisions
+          });
+      }
+  });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  initClient(); // Make sure this is called after the DOM is fully loaded
+});

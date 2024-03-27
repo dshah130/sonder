@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { healPlayer, healOwnPlayer, damagePlayer, decreaseDecisionTimer, increaseDecisionTimer, lowerPlayerStats, raisePlayerStats, setBlockForNextTurn } from '../actions/actions';
-
+import { getPlayerConnectionList } from '../handler/firebaseDatabaseHandler'
 const app = new PIXI.Application<HTMLCanvasElement>({ width: 600, height: 600 })
 const graphics = new PIXI.Graphics();
 
@@ -70,6 +70,22 @@ function setupUIListeners() {
         const currentPlayerUID = "sOfGRUQ6xda7zZh3icfuH1y3uS52";
         setBlockForNextTurn(currentPlayerUID);
     });
+
+}
+
+export function updateDropdown(playersList: string[]) {
+    const playersDropdown = document.getElementById('playersDropdown') as HTMLSelectElement | null;
+
+    if (playersDropdown) {
+        playersDropdown.length = 1; // Clear existing options except the first one
+
+        playersList.forEach((playerUid) => {
+            const option = new Option(playerUid, playerUid); // Assuming playerUid is what you want to display
+            playersDropdown.add(option);
+        });
+    } else {
+        console.error("Dropdown element not found.");
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

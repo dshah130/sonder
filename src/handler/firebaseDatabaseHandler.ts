@@ -160,75 +160,17 @@ export function createConnection(UID:string){
     return connectedRef;
 }
 
-export function getPlayerConnectionList() {
-    // We're connected (or reconnected)! Do anything here that should happen only if online (or on reconnect)
-    const playerConnectionListRef = ref(database, 'players');
+// Modify the function to accept a callback
+export function getPlayerConnectionList(callback: (playersList: string[]) => void) {
+  const playerConnectionListRef = ref(database, 'players');
 
-    onValue(playerConnectionListRef, (snapshot) => {
-        const data = snapshot.val();
-        //updateStarCount(postElement, data);
-        //console.log(data)
-    });
-    // onChildAdded(ref, (data) => {
-    //     console.log("Added",data.key);
-    // });
-
-    // onChildRemoved(ref, (data) => {
-    //     console.log("Removed", data.key);
-    //     //checkPlayerList()
-    // });
-
-    // onValue(ref, (snap)=>{
-    //     const data = snap.val();
-    //     playersConnectedListCurrent = data || {}; // If data is null or undefined, initialize activePlayers as an empty object
-    //     console.log("finish", playersConnectedListCurrent)
-
-    //     return data
-    // },{
-    //     onlyOnce: true
-    // });
-
-    // function checkPlayerList(){
-    //     let playersConnectedList : string [] = [];
-
-    // }
-
-    //     // onValue(ref, (snap) => {
-    //     //     if (snap.val()){
-    //     //         const con = push(ref);
-    //     //         playersConnectedList = [];
-    
-    //     //         snap.forEach((childSnapshot) => {
-    //     //             const childKey = childSnapshot.key;
-    //     //             playersConnectedList.push(childKey)
-    //     //         });       
-    
-    //     //         playersConnectedListCurrent = playersConnectedList
-    //     //         console.log("retrieved list", playersConnectedListCurrent)
-
-    //     //         //onDisconnect(lastOnlineRef).set(serverTimestamp());
-    //     //         onDisconnect(con)
-    //     //         // When I disconnect report it
-    //     //         .remove()
-    //     //         .then(() => {
-    //     //             console.log("Client was removed when getting list")
-    //     //             })
-    //     //             .catch((error)=>{
-    //     //             console.log("Disconnected getting list")
-    //     //             printErrorMsg(error)
-    //     //         });
-                
-    //     //         return playersConnectedListCurrent
-    //     //     }else{
-    //     //         console.log("not connected");
-    //     //     }
-    //     // },{
-    //     //     onlyOnce: true
-    //     // });
-    // }
-
-
-    return playersConnectedListCurrent;
+  onValue(playerConnectionListRef, (snapshot) => {
+      const data = snapshot.val();
+      const playersList = Object.keys(data); // Assuming the data structure allows this
+      callback(playersList); // Call the callback with the players list
+  }, {
+      onlyOnce: true // If you only want to fetch the list once; remove this if you want continuous updates
+  });
 }
 
 // export function getLastOnlineRef(UID:string){
@@ -293,8 +235,3 @@ export function getPlayerConnectionList() {
 // CREATE: action player2: actionList
 // READ: action player2: actionList
 // UPDATE:  action player2: actionList
-
-
-
-
-
