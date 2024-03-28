@@ -16,6 +16,7 @@ const currentPlayerUID = urlParams.get('currentPlayerUID') === null? "" :  urlPa
 
 export function initGame(){
 
+    console.log("init game")
     // Draw a rectangle
     graphics.beginFill(0xFF0000); // Red color
     graphics.drawRect(0, 0, 100, 100); // x, y, width, height
@@ -94,6 +95,5 @@ function setupUIListeners(targetPlayerUID:string , currentPlayerUID:string ) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    initGame();
     setupUIListeners("targetPlayerUID","currentPlayerUID");
 });

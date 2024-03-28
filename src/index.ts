@@ -27,6 +27,7 @@ function loadPage() {
             .then(response => response.text())
             .then(html => {
                 document.body.innerHTML = html;
+                initClient();
             })
             .catch(error => {
                 console.error('Failed to load profile.html:', error);
@@ -39,6 +40,5 @@ function loadPage() {
 
 //initial run of game
 (function () {
-    initClient();
     loadPage();
 })();

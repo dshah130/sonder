@@ -24,19 +24,24 @@ function signInClient(){
 }
 
 export function initClient() {
+  console.log("client init")
   signInClient();
 
   // After successful sign-in
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
       if(user) {
           console.log(user.uid);
           createConnection(user.uid); // Assuming createConnection sets up the necessary Firebase real-time database connections
 
+          MyPlayer.UID = user.uid
+          MyPlayer.Type = await assignMBTIToPlayer(user.uid)
+          updatePlayerRef(user.uid,MyPlayer)
+          
           // Now fetch and use the player connections list
           getPlayerConnectionList((playersList) => {
               // Here, you have access to the updated players list
               console.log("Players connected:", playersList);
-              //updateDropdown(playersList);
+              updateDropdown(playersList);
               // You can now do something with this list, like displaying it in the UI or making game-related decisions
           });
 
@@ -94,6 +99,6 @@ function setupUIListeners(){
 
 
 document.addEventListener('DOMContentLoaded', () => {
-  initClient(); // Make sure this is called after the DOM is fully loaded
+  //initClient(); // Make sure this is called after the DOM is fully loaded
   setupUIListeners()
 });
