@@ -12,11 +12,11 @@ function getRandomMBTIType(): string {
 // Function to assign an MBTI type to a player and return it
 async function assignMBTIToPlayer(playerId: string): Promise<string> {
   const playerMBTI = getRandomMBTIType();
-  const playerRef = doc(firestore, "players", playerId);
+  // const playerRef = doc(firestore, "players", playerId);
 
-  await updateDoc(playerRef, {
-    type: playerMBTI 
-  });
+  // await updateDoc(playerRef, {
+  //   type: playerMBTI 
+  // });
 
   return playerMBTI; 
 }

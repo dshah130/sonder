@@ -16,7 +16,8 @@ import {
 
 import { printErrorMsg } from "./errorHandler";
 import { playerRTBModel } from "../interfaces/RTBModels/playersRTBModel";
-import { InGame } from "../interfaces/RTBModels/inGameRTBModel";
+import { InGameRTBModel } from "../interfaces/RTBModels/inGameRTBModel";
+import { gameRTBModel, actionList } from "../interfaces/RTBModels/gamesRTBModel";
 
 let playersConnectedListCurrent : string [] = [];
 
@@ -29,8 +30,14 @@ export function getPlayerConnectionRef(UID:string){
 
 export function getPlayerInGameRef(UID:string){
     let playerInGameRef = ref(database, `players/${UID}/inGame`);
-    //console.log(playerConRef)
+    console.log(playerInGameRef)
     return playerInGameRef;
+}
+
+export function getGameRef(gameUID:string){
+  let playerInGameRef = ref(database, `games/${gameUID}`);
+  console.log(playerInGameRef)
+  return playerInGameRef;
 }
 
 
@@ -110,13 +117,6 @@ export function createConnection(UID:string){
           const con = push(myConnectionsRef);
 
 
-            // const inGame:InGame = {
-            //    OpponentUID: "danger",
-            //    GameUID: 'Test' 
-            // }
-
-
-
             //const gameRef =  push(childref(database, `players/${UID}/`)).key;
            // const gameRef = push(child(ref(database), `players/${UID}/`)).key;
 
@@ -159,6 +159,76 @@ export function createConnection(UID:string){
 
     return connectedRef;
 }
+
+export function createInGame(currentPlayerUID:string,GameUID:string,targetPlayerUID:string){
+  
+  const inGame:InGameRTBModel = {
+    OpponentUID: targetPlayerUID,
+    GameUID: GameUID 
+  }
+  interface UpdateInGame {
+        [key:string]:InGameRTBModel
+  }
+
+  const updates: UpdateInGame = {};
+  updates[ `players/${currentPlayerUID}/inGame`] = inGame;
+
+  update(ref(database), updates)
+  .then(()=>{
+      console.log("Updated Succesfully")
+  });
+
+}
+
+export async function createGame(currentPlayerUID:string):Promise<string | null>{
+  
+  const player1ActionList: string[] = [];
+  const player2ActionList: string[] = [];
+
+  const game:gameRTBModel ={
+    turn: currentPlayerUID,
+    player1ActionList: player1ActionList,
+    player2ActionList: player2ActionList
+  }
+
+  interface UpdateGame {
+    [key:string] : gameRTBModel
+  }
+
+  const newGameID = push(child(ref(database), 'games')).key;
+
+  const updates: UpdateGame = {};
+  updates[`games/${newGameID}/`] = game
+
+  update(ref(database), updates)
+  .then(()=>{
+      console.log("Updated Succesfully")
+  });
+  console.log("New GameID",newGameID)
+  return newGameID
+}
+
+export function readInGame(currentPlayerUID:string){
+
+  onValue( getPlayerInGameRef(currentPlayerUID), (snapshot) =>{
+    const data = snapshot.val();
+    console.log(data)
+  })
+}
+
+// export async function readGame(gameUID:string):Promise<gameRTBModel>{
+
+//   try{
+//     onValue( getGameRef(gameUID), (snapshot) =>{
+//       const data = snapshot.val();
+//       console.log(data)
+//     })
+    
+//   }catch(error){
+
+//   }
+
+// }
 
 // Modify the function to accept a callback
 export function getPlayerConnectionList(callback: (playersList: string[]) => void) {

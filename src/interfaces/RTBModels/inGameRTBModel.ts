@@ -1,4 +1,4 @@
-export interface InGame{
+export interface InGameRTBModel{
     OpponentUID: string,
     GameUID: string
 }
