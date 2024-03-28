@@ -3,20 +3,24 @@ import { healPlayer, healOwnPlayer, damagePlayer, decreaseDecisionTimer, increas
 import {getMyUserUID} from '../handler/firebaseAuthHandler'
 import {getPlayerInGameRef, createInGame, readInGame, createGame} from '../handler/firebaseDatabaseHandler';
 
+
 const app = new PIXI.Application<HTMLCanvasElement>({ width: 600, height: 600 })
 const graphics = new PIXI.Graphics();
 
-// Get the query string from the URL
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
 
-// Retrieve parameter values
-const targetPlayerUID = urlParams.get('targetPlayerUID') === null? "" : urlParams.get('targetPlayerUID') ;
-const currentPlayerUID = urlParams.get('currentPlayerUID') === null? "" :  urlParams.get('currentPlayerUID');  
 
 export function initGame(){
 
     console.log("init game")
+        // Get the query string from the URL
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    // Retrieve parameter values
+    const targetPlayerUID = urlParams.get('targetPlayerUID') === null? "" : urlParams.get('targetPlayerUID') ;
+    const currentPlayerUID = urlParams.get('currentPlayerUID') === null? "" :  urlParams.get('currentPlayerUID');  
+    console.log(targetPlayerUID,currentPlayerUID)
+
     // Draw a rectangle
     graphics.beginFill(0xFF0000); // Red color
     graphics.drawRect(0, 0, 100, 100); // x, y, width, height
@@ -38,8 +42,8 @@ export function initGame(){
         console.log("itworks",uid)
         //getPlayerInGameRef(uid)
         createGame(uid).then((gameUID)=>{
-            if(gameUID){
-                createInGame(uid,gameUID,"crGfXYIFp4OyDJmyxzy9YlkeRoS2")
+            if(gameUID && targetPlayerUID){
+                createInGame(uid,gameUID,targetPlayerUID)
             }
             else{
                 console.log("Couldn't retirieve game uid")
@@ -50,8 +54,9 @@ export function initGame(){
     .catch((error)=>{
         console.log(error)
     })
-
-    setupUIListeners("targetPlayerUID","currentPlayerUID")
+    if(targetPlayerUID && currentPlayerUID){
+        setupUIListeners(targetPlayerUID,currentPlayerUID)
+    }
 }
 
 function setupUIListeners(targetPlayerUID:string , currentPlayerUID:string ) {
@@ -93,7 +98,3 @@ function setupUIListeners(targetPlayerUID:string , currentPlayerUID:string ) {
     });
 
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    setupUIListeners("targetPlayerUID","currentPlayerUID");
-});

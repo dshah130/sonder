@@ -204,7 +204,7 @@ export async function createGame(currentPlayerUID:string):Promise<string | null>
   .then(()=>{
       console.log("Updated Succesfully")
   });
-  console.log(newGameID)
+  console.log("New GameID",newGameID)
   return newGameID
 }
 
