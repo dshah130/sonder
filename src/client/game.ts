@@ -6,9 +6,9 @@ const graphics = new PIXI.Graphics();
 
 export function initGame(){
     // Draw a rectangle
-    graphics.beginFill(0xFF0000); // Red color
-    graphics.drawRect(0, 0, 100, 100); // x, y, width, height
-    graphics.endFill();
+    // graphics.beginFill(0xFF0000); // Red color
+    // graphics.drawRect(0, 0, 100, 100); // x, y, width, height
+    // graphics.endFill();
 
     // Add the rectangle to the stage
     app.stage.addChild(graphics);

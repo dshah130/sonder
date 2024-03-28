@@ -22,7 +22,7 @@ export const BaseStatsPlayer : Player = {
     IE: 0,
     IL: 0,
     Type: "",
-    Health: 0,
+    Health: 5,
     Damage: 0,
     decisionTimer: 0
 }
