@@ -1,7 +1,7 @@
 import { Connections } from "./connectionRTBModel";
-import { InGame } from "./inGameRTBModel";
+import { InGameRTBModel } from "./inGameRTBModel";
 
 export interface playerRTBModel {
     connections:Connections,
-    inGame:InGame
+    inGame:InGameRTBModel
 }

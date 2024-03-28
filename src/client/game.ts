@@ -1,10 +1,21 @@
 import * as PIXI from 'pixi.js';
 import { healPlayer, healOwnPlayer, damagePlayer, decreaseDecisionTimer, increaseDecisionTimer, lowerPlayerStats, raisePlayerStats, setBlockForNextTurn } from '../actions/actions';
-import { getPlayerConnectionList } from '../handler/firebaseDatabaseHandler'
+import {getMyUserUID} from '../handler/firebaseAuthHandler'
+import {getPlayerInGameRef, createInGame, readInGame, createGame} from '../handler/firebaseDatabaseHandler';
+
 const app = new PIXI.Application<HTMLCanvasElement>({ width: 600, height: 600 })
 const graphics = new PIXI.Graphics();
 
+// Get the query string from the URL
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+
+// Retrieve parameter values
+const targetPlayerUID = urlParams.get('targetPlayerUID') === null? "" : urlParams.get('targetPlayerUID') ;
+const currentPlayerUID = urlParams.get('currentPlayerUID') === null? "" :  urlParams.get('currentPlayerUID');  
+
 export function initGame(){
+
     // Draw a rectangle
     graphics.beginFill(0xFF0000); // Red color
     graphics.drawRect(0, 0, 100, 100); // x, y, width, height
@@ -18,18 +29,28 @@ export function initGame(){
     // Append the Pixi.js Application's view (canvas element) to the container
     if (canvas) {
         canvas.appendChild(app.view);
-        console.log("It works")
     } else {
         console.error("Container element not found");
     }
-    setupUIListeners()
+    getMyUserUID()
+    .then((uid)=>{
+        console.log("itworks",uid)
+        //getPlayerInGameRef(uid)
+        createGame(uid)
+        createInGame(uid,"yes","crGfXYIFp4OyDJmyxzy9YlkeRoS2")
+        //readInGame(uid);
+    })
+    .catch((error)=>{
+        console.log(error)
+    })
+
+    setupUIListeners("targetPlayerUID","currentPlayerUID")
 }
 
-function setupUIListeners() {
+function setupUIListeners(targetPlayerUID:string , currentPlayerUID:string ) {
     const healButton = document.getElementById('healButton');
     if (healButton) {
         healButton.addEventListener('click', () => {
-            const targetPlayerUID = "crGfXYIFp4OyDJmyxzy9YlkeRoS2"; 
             healPlayer(targetPlayerUID);
         });
     } else {
@@ -37,58 +58,36 @@ function setupUIListeners() {
     }
     
     document.getElementById('healOwnButton')?.addEventListener('click', () => {
-        const currentPlayerUID = "sOfGRUQ6xda7zZh3icfuH1y3uS52";
         healOwnPlayer(currentPlayerUID);
     });
 
     document.getElementById('damageButton')?.addEventListener('click', () => {
-        const targetPlayerUID = "crGfXYIFp4OyDJmyxzy9YlkeRoS2"; 
         damagePlayer(targetPlayerUID);
     });
 
     document.getElementById('decreaseTimerButton')?.addEventListener('click', () => {
-        const targetPlayerUID = "crGfXYIFp4OyDJmyxzy9YlkeRoS2";
         decreaseDecisionTimer(targetPlayerUID);
     });
 
     document.getElementById('increaseTimerButton')?.addEventListener('click', () => {
-        const currentPlayerUID = "sOfGRUQ6xda7zZh3icfuH1y3uS52";
         increaseDecisionTimer(currentPlayerUID);
     });
 
     document.getElementById('lowerStatsButton')?.addEventListener('click', () => {
-        const targetPlayerUID = "crGfXYIFp4OyDJmyxzy9YlkeRoS2";
         lowerPlayerStats(targetPlayerUID);
     });
 
     document.getElementById('raiseStatsButton')?.addEventListener('click', () => {
-        const targetPlayerUID = "crGfXYIFp4OyDJmyxzy9YlkeRoS2";
         raisePlayerStats(targetPlayerUID);
     });
 
     document.getElementById('blockButton')?.addEventListener('click', () => {
-        const currentPlayerUID = "sOfGRUQ6xda7zZh3icfuH1y3uS52";
         setBlockForNextTurn(currentPlayerUID);
     });
 
 }
 
-export function updateDropdown(playersList: string[]) {
-    const playersDropdown = document.getElementById('playersDropdown') as HTMLSelectElement | null;
-
-    if (playersDropdown) {
-        playersDropdown.length = 1; // Clear existing options except the first one
-
-        playersList.forEach((playerUid) => {
-            const option = new Option(playerUid, playerUid); // Assuming playerUid is what you want to display
-            playersDropdown.add(option);
-        });
-    } else {
-        console.error("Dropdown element not found.");
-    }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     initGame();
-    setupUIListeners();
+    setupUIListeners("targetPlayerUID","currentPlayerUID");
 });
