@@ -180,7 +180,7 @@ export function createInGame(currentPlayerUID:string,GameUID:string,targetPlayer
 
 }
 
-export async function createGame(currentPlayerUID:string):Promise<string>{
+export async function createGame(currentPlayerUID:string){
   
   const player1ActionList: string[] = [];
   const player2ActionList: string[] = [];
