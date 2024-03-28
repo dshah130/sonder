@@ -180,7 +180,7 @@ export function createInGame(currentPlayerUID:string,GameUID:string,targetPlayer
 
 }
 
-export async function createGame(currentPlayerUID:string){
+export async function createGame(currentPlayerUID:string):Promise<string | null>{
   
   const player1ActionList: string[] = [];
   const player2ActionList: string[] = [];
@@ -204,6 +204,7 @@ export async function createGame(currentPlayerUID:string){
   .then(()=>{
       console.log("Updated Succesfully")
   });
+  console.log(newGameID)
   return newGameID
 }
 

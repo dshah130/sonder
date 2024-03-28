@@ -36,8 +36,14 @@ export function initGame(){
     .then((uid)=>{
         console.log("itworks",uid)
         //getPlayerInGameRef(uid)
-        createGame(uid)
-        createInGame(uid,"yes","crGfXYIFp4OyDJmyxzy9YlkeRoS2")
+        createGame(uid).then((gameUID)=>{
+            if(gameUID){
+                createInGame(uid,gameUID,"crGfXYIFp4OyDJmyxzy9YlkeRoS2")
+            }
+            else{
+                console.log("Couldn't retirieve game uid")
+            }
+        })
         //readInGame(uid);
     })
     .catch((error)=>{
