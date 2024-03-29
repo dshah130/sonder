@@ -1,7 +1,7 @@
 //Firebase
 import { signInAnonymously, onAuthStateChanged } from '@firebase/auth'
-import { auth, firestore } from "../firebase/firebase";
-import { handleDataBaseConnection, getPlayerConnectionRef, createConnection, getPlayerConnectionList } from '../handler/firebaseDatabaseHandler';
+import { auth, firestore, database, } from "../firebase/firebase";
+import { listenToGameUpdates, joinGame, createGame, createConnection, getPlayerConnectionList } from '../handler/firebaseDatabaseHandler';
 //Enum
 import { Player, BaseStatsPlayer } from '../interfaces/player';
 
@@ -15,6 +15,7 @@ export const MyPlayer: Player = BaseStatsPlayer;
 export const gameParams = {
   targetPlayerUID: "",
   currentPlayerUID: "",
+  gameId:""
 }
 
 function signInClient() {
@@ -74,6 +75,38 @@ export function updateDropdown(playersList: string[]) {
 }
 
 function setupUIListeners() {
+  document.getElementById("createGameBtn")?.addEventListener('click', async () => {
+    const gameUID = await createGame(MyPlayer.UID);
+    if (gameUID) {
+      console.log(`Game created with ID: ${gameUID}`);
+      listenToGameUpdates(gameUID, (gameData) => {
+        // Update the game UI based on `gameData`
+      });
+    }
+  });
+
+  document.getElementById("joinGameBtn")?.addEventListener('click', async () => {
+    const gameUIDInput = document.getElementById("gameUIDInput") as HTMLInputElement;
+
+        // Format the URL with query parameters
+        gameParams.gameId = gameUIDInput.value
+        console.log('triedgameid',gameParams.gameId)
+        const baseUrl = '../game/index.html'; // Base URL of the target page
+        const queryString = new URLSearchParams(gameParams).toString(); // Convert parameters to query string
+        const url = `${baseUrl}?${queryString}`; // Combine base URL and query string
+    
+        if (gameUIDInput && gameUIDInput.value) {
+          await joinGame(gameUIDInput.value, MyPlayer.UID);
+          listenToGameUpdates(gameUIDInput.value, (gameData) => {
+            // Update the game UI based on `gameData`
+          });
+        }
+
+        console.log(gameParams)
+        console.log(url)
+        window.location.href = url
+  });
+
   const playersDropdown = document.getElementById('playersDropdown') as HTMLSelectElement;
   if (playersDropdown) {
     playersDropdown.addEventListener("change", () => {
