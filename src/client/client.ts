@@ -77,12 +77,28 @@ export function updateDropdown(playersList: string[]) {
 function setupUIListeners() {
   document.getElementById("createGameBtn")?.addEventListener('click', async () => {
     const gameUID = await createGame(MyPlayer.UID);
+
     if (gameUID) {
       console.log(`Game created with ID: ${gameUID}`);
+      gameParams.gameId = gameUID
+
+    // Format the URL with query parameters
+    const baseUrl = '../game/index.html'; // Base URL of the target page
+    const queryString = new URLSearchParams(gameParams).toString(); // Convert parameters to query string
+    const url = `${baseUrl}?${queryString}`; // Combine base URL and query string
+
+
       listenToGameUpdates(gameUID, (gameData) => {
         // Update the game UI based on `gameData`
       });
+
+      console.log(gameParams)
+      console.log(url)
+      window.location.href = url
     }
+   
+
+
   });
 
   document.getElementById("joinGameBtn")?.addEventListener('click', async () => {
@@ -117,13 +133,10 @@ function setupUIListeners() {
   }
 
   document.getElementById("playGameBtn")?.addEventListener('click', () => {
-    // Format the URL with query parameters
-    const baseUrl = '../game/index.html'; // Base URL of the target page
-    const queryString = new URLSearchParams(gameParams).toString(); // Convert parameters to query string
-    const url = `${baseUrl}?${queryString}`; // Combine base URL and query string
 
-    console.log(gameParams)
-    console.log(url)
-    window.location.href = url
   })
+}
+
+function goToGamePage(){
+
 }
