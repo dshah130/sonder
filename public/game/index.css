@@ -41,6 +41,13 @@ button:active {
     transform: scale(0.98);
 }
 
+.player {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+}
+
 /* makes sure its playable within all screens */
 @media (max-width: 600px) {
     button {

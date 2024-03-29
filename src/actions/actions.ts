@@ -10,10 +10,10 @@ export async function healPlayer(targetPlayerUID: string) {
         const patientSnapshot = await getDoc(patientRef);
         if (patientSnapshot.exists()) {
             const patientData = patientSnapshot.data();
-            const newHealth = (patientData.health || 0) + 1; 
+            const newHealth = (patientData.Health || 0) + 1; 
             
             // Update health
-            await updateDoc(patientRef, { health: newHealth });
+            await updateDoc(patientRef, { Health: newHealth });
             console.log(`Player ${targetPlayerUID} healed. New health: ${newHealth}`);
         } else {
             console.log(`Player data for ${targetPlayerUID} not found.`);
@@ -32,10 +32,10 @@ export async function healOwnPlayer(playerUID: string) {
         const patientSnapshot = await getDoc(patientRef);
         if (patientSnapshot.exists()) {
             const patientData = patientSnapshot.data();
-            const newHealth = (patientData.health || 0) + 1; 
+            const newHealth = (patientData.Health || 0) + 1; 
             
             // Update health
-            await updateDoc(patientRef, { health: newHealth });
+            await updateDoc(patientRef, { Health: newHealth });
             console.log(`Player ${playerUID} healed. New health: ${newHealth}`);
         } else {
             console.log(`Player data for ${playerUID} not found.`);
@@ -53,12 +53,12 @@ export async function damagePlayer(targetPlayerUID: string) {
         const patientSnapshot = await getDoc(patientRef);
         if (patientSnapshot.exists()) {
             const patientData = patientSnapshot.data();
-            const newHealth = (patientData.health || 0) - 1; 
+            const newHealth = (patientData.Health || 0) - 1; 
             
             // Prevent health from going below 0
             if (newHealth >= 0) {
                 // Update health 
-                await updateDoc(patientRef, { health: newHealth });
+                await updateDoc(patientRef, { Health: newHealth });
                 console.log(`Player ${targetPlayerUID} damaged. New health: ${newHealth}`);
             } else {
                 console.log(`Player ${targetPlayerUID} cannot have health reduced below 0.`);
@@ -79,10 +79,10 @@ export async function decreaseDecisionTimer(targetPlayerUID: string) {
         const docSnapshot = await getDoc(playerRef);
         if (docSnapshot.exists()) {
             const playerData = docSnapshot.data();
-            const currentTimer = playerData.decisionTimer || 3; 
+            const currentTimer = playerData.Timer || 3; 
             const newTimer = Math.max(currentTimer - 2, 0); 
 
-            await updateDoc(playerRef, { decisionTimer: newTimer });
+            await updateDoc(playerRef, { Timer: newTimer });
             console.log(`Decision timer for player ${targetPlayerUID} decreased by 2 seconds. New timer: ${newTimer} seconds.`);
         } else {
             console.log(`Player data for ${targetPlayerUID} not found.`);
@@ -101,10 +101,10 @@ export async function increaseDecisionTimer(playerUID: string) {
         if (docSnapshot.exists()) {
             const playerData = docSnapshot.data();
             // Assuming 30 is the default decision timer
-            const currentTimer = playerData.decisionTimer || 3; 
+            const currentTimer = playerData.Timer || 3; 
             const newTimer = Math.max(currentTimer + 2, 0); 
 
-            await updateDoc(playerRef, { decisionTimer: newTimer });
+            await updateDoc(playerRef, { Timer: newTimer });
             console.log(`Decision timer for player ${playerUID} increased by 2 seconds. New timer: ${newTimer} seconds.`);
         } else {
             console.log(`Player data for ${playerUID} not found.`);
@@ -129,7 +129,7 @@ export async function lowerPlayerStats(targetPlayerUID: string) {
                 SL: Math.max(playerData.SL - 0.5, 0),
                 IL: Math.max(playerData.IL - 0.5, 0),
                 IE: Math.max(playerData.IE - 0.5, 0),
-                damage: Math.max(playerData.damage - 0.5, 0), 
+                Damage: Math.max(playerData.Damage - 0.5, 0), 
             };
             
             await updateDoc(playerRef, updatedStats);
@@ -156,7 +156,7 @@ export async function raisePlayerStats(targetPlayerUID: string) {
                 SL: (playerData.SL || 0) + 0.5,
                 IL: (playerData.IL || 0) + 0.5,
                 IE: (playerData.IE || 0) + 0.5,
-                damage: (playerData.damage || 0) + 0.5,
+                Damage: (playerData.Damage || 0) + 0.5,
             };
             
             await updateDoc(playerRef, updatedStats);

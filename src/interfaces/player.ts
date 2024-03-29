@@ -9,9 +9,7 @@ export interface Player {
     Type: string;
     Health: number;
     Damage: number;
-    decisionTimer: number;
-
-    // Add any other properties you want to include
+    Timer: number;
 }
 
 export const BaseStatsPlayer : Player = {
@@ -24,7 +22,5 @@ export const BaseStatsPlayer : Player = {
     Type: "",
     Health: 5,
     Damage: 0,
-    decisionTimer: 0
+    Timer: 0
 }
-
-

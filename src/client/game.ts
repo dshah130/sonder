@@ -1,25 +1,24 @@
 import * as PIXI from 'pixi.js';
 import { healPlayer, healOwnPlayer, damagePlayer, decreaseDecisionTimer, increaseDecisionTimer, lowerPlayerStats, raisePlayerStats, setBlockForNextTurn } from '../actions/actions';
-import {getMyUserUID} from '../handler/firebaseAuthHandler'
-import {getPlayerInGameRef, createInGame, readInGame, createGame} from '../handler/firebaseDatabaseHandler';
-
+import { getMyUserUID } from '../handler/firebaseAuthHandler'
+import { getPlayerInGameRef, createInGame, readInGame, createGame } from '../handler/firebaseDatabaseHandler';
+import { firestore } from "../firebase/firebase";
+import { doc, onSnapshot } from "firebase/firestore";
 
 const app = new PIXI.Application<HTMLCanvasElement>({ width: 600, height: 600 })
 const graphics = new PIXI.Graphics();
 
-
-
-export function initGame(){
+export function initGame() {
 
     console.log("init game")
-        // Get the query string from the URL
+    // Get the query string from the URL
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
 
     // Retrieve parameter values
-    const targetPlayerUID = urlParams.get('targetPlayerUID') === null? "" : urlParams.get('targetPlayerUID') ;
-    const currentPlayerUID = urlParams.get('currentPlayerUID') === null? "" :  urlParams.get('currentPlayerUID');  
-    console.log(targetPlayerUID,currentPlayerUID)
+    const targetPlayerUID = urlParams.get('targetPlayerUID') === null ? "" : urlParams.get('targetPlayerUID');
+    const currentPlayerUID = urlParams.get('currentPlayerUID') === null ? "" : urlParams.get('currentPlayerUID');
+    console.log(targetPlayerUID, currentPlayerUID)
 
     // Draw a rectangle
     // graphics.beginFill(0xFF0000); // Red color
@@ -38,28 +37,36 @@ export function initGame(){
         console.error("Container element not found");
     }
     getMyUserUID()
-    .then((uid)=>{
-        console.log("itworks",uid)
-        //getPlayerInGameRef(uid)
-        createGame(uid).then((gameUID)=>{
-            if(gameUID && targetPlayerUID){
-                createInGame(uid,gameUID,targetPlayerUID)
-            }
-            else{
-                console.log("Couldn't retirieve game uid")
-            }
+        .then((uid) => {
+            console.log("itworks", uid)
+            //getPlayerInGameRef(uid)
+            createGame(uid).then((gameUID) => {
+                if (gameUID && targetPlayerUID) {
+                    createInGame(uid, gameUID, targetPlayerUID)
+                }
+                else {
+                    console.log("Couldn't retirieve game uid")
+                }
+            })
+            //readInGame(uid);
         })
-        //readInGame(uid);
-    })
-    .catch((error)=>{
-        console.log(error)
-    })
-    if(targetPlayerUID && currentPlayerUID){
-        setupUIListeners(targetPlayerUID,currentPlayerUID)
+        .catch((error) => {
+            console.log(error)
+        })
+
+    if (targetPlayerUID && currentPlayerUID) {
+        setupUIListeners(targetPlayerUID, currentPlayerUID)
+    }
+   
+    if (currentPlayerUID) {
+        setupPlayerStatsListener(currentPlayerUID, 'player1');
+    }
+    if (targetPlayerUID) {
+        setupPlayerStatsListener(targetPlayerUID, 'player2');
     }
 }
 
-function setupUIListeners(targetPlayerUID:string , currentPlayerUID:string ) {
+function setupUIListeners(targetPlayerUID: string, currentPlayerUID: string) {
     const healButton = document.getElementById('healButton');
     if (healButton) {
         healButton.addEventListener('click', () => {
@@ -68,7 +75,7 @@ function setupUIListeners(targetPlayerUID:string , currentPlayerUID:string ) {
     } else {
         console.error('Heal button not found');
     }
-    
+
     document.getElementById('healOwnButton')?.addEventListener('click', () => {
         healOwnPlayer(currentPlayerUID);
     });
@@ -97,4 +104,41 @@ function setupUIListeners(targetPlayerUID:string , currentPlayerUID:string ) {
         setBlockForNextTurn(currentPlayerUID);
     });
 
+}
+
+// Setup real time listener for player stats
+function setupPlayerStatsListener(playerUID: string, playerPrefix: string) {
+    const playerRef = doc(firestore, "players", playerUID);
+
+    onSnapshot(playerRef, (docSnapshot) => {
+        console.log(`Received update for player: ${playerUID}`);
+        if (docSnapshot.exists()) {
+            const playerData = docSnapshot.data();
+            console.log(`Data for player ${playerUID}:`, playerData);
+            updatePlayerStatsUI(playerPrefix, playerData);
+        } else {
+            console.log(`No data found for player with UID: ${playerUID}`);
+        }
+    });
+}
+
+function updatePlayerStatsUI(playerPrefix: string, data: any) {
+    const statKeys = ["UID", "Level", "Health", "Damage", "SE", "SL", "IE", "IL", "Type", "Timer"];
+
+    statKeys.forEach((key) => {
+        const element = document.getElementById(`${playerPrefix}${key}`);
+        
+        // Proceed if element exists
+        if (element) {
+            let value = data[key];
+            
+            if (value !== undefined && value !== null) {
+                element.textContent = value.toString();
+            } else {
+                element.textContent = (key === "Type") ? "N/A" : "0"; 
+            }
+        } else {
+            console.error(`Element not found for stat: ${key}, with prefix: ${playerPrefix}`);
+        }
+    });
 }
