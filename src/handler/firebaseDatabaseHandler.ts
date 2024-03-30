@@ -260,6 +260,42 @@ export async function readGame(gameUID: string): Promise<gameRTBModel | null> {
   }
 }
 
+export function changeGameTurn(targetPlayerUID: string, currentPlayerUID: string, gameUID:string){
+  
+  //const gameRef = ref(database, `games/${gameUID}`);
+
+  interface UpdateGame {
+    [key: string]: gameRTBModel
+  }
+
+  const updates: UpdateGame = {};
+
+  readGame(gameUID).then((game)=>{
+    if(game){
+      console.log("current turn:", game.turn)
+      if(game.turn == targetPlayerUID){
+        //switch turn
+        game.turn = currentPlayerUID
+        console.log("switched turn", game.turn)
+      }
+      else{
+        //switch turn
+        game.turn = targetPlayerUID
+        console.log("switched turn", game.turn)
+
+      }
+
+      updates[`games/${gameUID}`] = game;
+
+    }
+  }).finally(()=>{
+    update(ref(database), updates)
+    .then(() => {
+      console.log("Updated Turn Succesfully")
+    });
+  })
+}
+
 // Modify the function to accept a callback
 export function getPlayerConnectionList(callback: (playersList: string[]) => void) {
   const playerConnectionListRef = ref(database, 'players');

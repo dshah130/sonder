@@ -21,6 +21,6 @@ export const BaseStatsPlayer : Player = {
     IL: 0,
     Type: "",
     Health: 5,
-    Damage: 0,
-    Timer: 0
+    Damage: 1,
+    Timer: 3
 }

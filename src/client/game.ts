@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { healPlayer, healOwnPlayer, damagePlayer, decreaseDecisionTimer, increaseDecisionTimer, lowerPlayerStats, raisePlayerStats, setBlockForNextTurn } from '../actions/actions';
 import { getMyUserUID } from '../handler/firebaseAuthHandler'
-import { getPlayerInGameRef, createInGame, readInGame, createGame } from '../handler/firebaseDatabaseHandler';
+import { changeGameTurn, getPlayerInGameRef, createInGame, readInGame, createGame, readGame } from '../handler/firebaseDatabaseHandler';
 import { firestore } from "../firebase/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 
@@ -59,8 +59,8 @@ export function initGame() {
     //         console.log(error)
     //     })
 
-    if (targetPlayerUID && currentPlayerUID) {
-        setupUIListeners(targetPlayerUID, currentPlayerUID)
+    if (targetPlayerUID && currentPlayerUID && gameUID) {
+        setupUIListeners(targetPlayerUID, currentPlayerUID, gameUID)
     }
    
     if (currentPlayerUID) {
@@ -71,42 +71,91 @@ export function initGame() {
     }
 }
 
-function setupUIListeners(targetPlayerUID: string, currentPlayerUID: string) {
+function setupUIListeners(targetPlayerUID: string, currentPlayerUID: string, gameUID:string) {
+    
     const healButton = document.getElementById('healButton');
     if (healButton) {
         healButton.addEventListener('click', () => {
-            healPlayer(targetPlayerUID);
+            readGame(gameUID).then((game)=>{
+                if(game)
+                if(game.turn == currentPlayerUID){
+                    healPlayer(targetPlayerUID);
+                    changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
+                }
+            })
         });
     } else {
         console.error('Heal button not found');
     }
 
     document.getElementById('healOwnButton')?.addEventListener('click', () => {
-        healOwnPlayer(currentPlayerUID);
+        readGame(gameUID).then((game)=>{
+            if(game)
+            if(game.turn == currentPlayerUID){
+                healOwnPlayer(currentPlayerUID);
+                changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
+            }
+        })
     });
 
     document.getElementById('damageButton')?.addEventListener('click', () => {
-        damagePlayer(targetPlayerUID);
+        readGame(gameUID).then((game)=>{
+            if(game)
+            if(game.turn == currentPlayerUID){
+                damagePlayer(targetPlayerUID);
+                changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
+            }
+        })
     });
 
     document.getElementById('decreaseTimerButton')?.addEventListener('click', () => {
-        decreaseDecisionTimer(targetPlayerUID);
+        readGame(gameUID).then((game)=>{
+            if(game)
+            if(game.turn == currentPlayerUID){
+                decreaseDecisionTimer(targetPlayerUID);
+                changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
+            }
+        })
     });
 
     document.getElementById('increaseTimerButton')?.addEventListener('click', () => {
-        increaseDecisionTimer(currentPlayerUID);
+        readGame(gameUID).then((game)=>{
+            if(game)
+            if(game.turn == currentPlayerUID){
+                increaseDecisionTimer(currentPlayerUID);
+                changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
+            }
+        })    
     });
 
     document.getElementById('lowerStatsButton')?.addEventListener('click', () => {
-        lowerPlayerStats(targetPlayerUID);
+        readGame(gameUID).then((game)=>{
+            if(game)
+            if(game.turn == currentPlayerUID){
+                lowerPlayerStats(targetPlayerUID);
+                changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
+            }
+        })      
     });
 
     document.getElementById('raiseStatsButton')?.addEventListener('click', () => {
-        raisePlayerStats(targetPlayerUID);
+        readGame(gameUID).then((game)=>{
+            if(game)
+            if(game.turn == currentPlayerUID){
+                raisePlayerStats(targetPlayerUID);
+                changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
+            }
+        })   
     });
 
     document.getElementById('blockButton')?.addEventListener('click', () => {
-        setBlockForNextTurn(currentPlayerUID);
+        readGame(gameUID).then((game)=>{
+            if(game)
+            if(game.turn == currentPlayerUID){
+                setBlockForNextTurn(currentPlayerUID);
+                changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
+            }
+        })    
     });
 
 }

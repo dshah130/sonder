@@ -121,6 +121,7 @@ function setupUIListeners() {
         //read game
         readGame(gameUIDInput.value).then((game)=>{
           console.log(game!.turn)
+          gameParams.targetPlayerUID = game!.turn;
           createInGame(gameParams.currentPlayerUID,gameParams.gameUID,game!.turn)
         }).finally(()=>{
         // Format the URL with query parameters
