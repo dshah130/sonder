@@ -18,7 +18,9 @@ export function initGame() {
     // Retrieve parameter values
     const targetPlayerUID = urlParams.get('targetPlayerUID') === null ? "" : urlParams.get('targetPlayerUID');
     const currentPlayerUID = urlParams.get('currentPlayerUID') === null ? "" : urlParams.get('currentPlayerUID');
-    console.log(targetPlayerUID, currentPlayerUID)
+    const gameUID = urlParams.get('gameUID') === null ? "" : urlParams.get('gameUID');
+
+    console.log(targetPlayerUID, currentPlayerUID, gameUID)
 
     // Draw a rectangle
     // graphics.beginFill(0xFF0000); // Red color
@@ -36,23 +38,26 @@ export function initGame() {
     } else {
         console.error("Container element not found");
     }
-    getMyUserUID()
-        .then((uid) => {
-            console.log("itworks", uid)
-            //getPlayerInGameRef(uid)
-            createGame(uid).then((gameUID) => {
-                if (gameUID && targetPlayerUID) {
-                    createInGame(uid, gameUID, targetPlayerUID)
-                }
-                else {
-                    console.log("Couldn't retirieve game uid")
-                }
-            })
-            //readInGame(uid);
-        })
-        .catch((error) => {
-            console.log(error)
-        })
+    
+    // getMyUserUID()
+    //     .then((uid) => {
+    //         console.log(uid, gameUID!, targetPlayerUID!)
+    //         //createInGame(uid, gameUID!, targetPlayerUID!)
+    //         // console.log("itworks", uid)
+    //         // //getPlayerInGameRef(uid)
+    //         // createGame(uid).then((gameUID) => {
+    //         //     if (gameUID && targetPlayerUID) {
+    //         //         createInGame(uid, gameUID, targetPlayerUID)
+    //         //     }
+    //         //     else {
+    //         //         console.log("Couldn't retirieve game uid")
+    //         //     }
+    //         // })
+    //         // //readInGame(uid);
+    //     })
+    //     .catch((error) => {
+    //         console.log(error)
+    //     })
 
     if (targetPlayerUID && currentPlayerUID) {
         setupUIListeners(targetPlayerUID, currentPlayerUID)

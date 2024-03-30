@@ -41,64 +41,64 @@ export function getGameRef(gameUID: string) {
 }
 
 
-export function handleDataBaseConnection(UID: string) {
-  const connectedRef = ref(database, '.info/connected');
-  const myConnectionsRef = getPlayerConnectionRef(UID);
-  const playerConnectionListRef = ref(database, 'players');
-  //const lastOnlineRef = getLastOnlineRef(UID);
+// export function handleDataBaseConnection(UID: string) {
+//   const connectedRef = ref(database, '.info/connected');
+//   const myConnectionsRef = getPlayerConnectionRef(UID);
+//   const playerConnectionListRef = ref(database, 'players');
+//   //const lastOnlineRef = getLastOnlineRef(UID);
 
-  console.log("fire")
-  onValue(connectedRef, (snap) => {
-    if (snap.val() === true) {
-      // We're connected (or reconnected)! Do anything here that should happen only if online (or on reconnect)
-      const con = push(myConnectionsRef);
+//   console.log("fire")
+//   onValue(connectedRef, (snap) => {
+//     if (snap.val() === true) {
+//       // We're connected (or reconnected)! Do anything here that should happen only if online (or on reconnect)
+//       const con = push(myConnectionsRef);
 
-      console.log("Connected to DB");
+//       console.log("Connected to DB");
 
-      async function waitOneSecond(): Promise<void> {
-        return new Promise<void>((resolve) => {
-          setTimeout(() => {
-            resolve();
-          }, 1000); // Wait for 1 second (1000 milliseconds)
-        });
-      }
+//       async function waitOneSecond(): Promise<void> {
+//         return new Promise<void>((resolve) => {
+//           setTimeout(() => {
+//             resolve();
+//           }, 1000); // Wait for 1 second (1000 milliseconds)
+//         });
+//       }
 
-      // // Usage
-      // async function exampleUsage() {
-      //     getPlayerConnectionList(playerConnectionListRef);
-      //     await waitOneSecond(); // Wait for 1 second
-      //     console.log("pls", playersConnectedListCurrent)
-      // }
+//       // // Usage
+//       // async function exampleUsage() {
+//       //     getPlayerConnectionList(playerConnectionListRef);
+//       //     await waitOneSecond(); // Wait for 1 second
+//       //     console.log("pls", playersConnectedListCurrent)
+//       // }
 
-      // exampleUsage(); // Call the exampleUsage function
-      // console.log("pls", playersConnectedListCurrent)
+//       // exampleUsage(); // Call the exampleUsage function
+//       // console.log("pls", playersConnectedListCurrent)
 
-      // let test = getPlayerConnectionList(playerConnectionListRef);
-      // await waitOneSecond(); // Wait for 1 second
-      // console.log("pls", test, playersConnectedListCurrent)
+//       // let test = getPlayerConnectionList(playerConnectionListRef);
+//       // await waitOneSecond(); // Wait for 1 second
+//       // console.log("pls", test, playersConnectedListCurrent)
 
 
-      //   When I disconnect, update the last time I was seen online
-      //onDisconnect(lastOnlineRef).set(serverTimestamp());
-      onDisconnect(con)
-        // When I disconnect, remove this device
-        .remove()
-        .then(() => {
-          console.log("Client was removed")
-        })
-        .catch((error) => {
-          printErrorMsg(error)
-        });
+//       //   When I disconnect, update the last time I was seen online
+//       //onDisconnect(lastOnlineRef).set(serverTimestamp());
+//       onDisconnect(con)
+//         // When I disconnect, remove this device
+//         .remove()
+//         .then(() => {
+//           console.log("Client was removed")
+//         })
+//         .catch((error) => {
+//           printErrorMsg(error)
+//         });
 
-      // Add this device to my connections list
-      // this value could contain info about the device or a timestamp too
-      set(con, true);
+//       // Add this device to my connections list
+//       // this value could contain info about the device or a timestamp too
+//       set(con, true);
 
-    } else {
-      console.log("not connected");
-    }
-  });
-}
+//     } else {
+//       console.log("not connected");
+//     }
+//   });
+// }
 
 export function createConnection(UID: string) {
 
@@ -135,15 +135,15 @@ export function createConnection(UID: string) {
       //   When I disconnect, update the last time I was seen online
       //onDisconnect(lastOnlineRef).set(serverTimestamp());
 
-      onDisconnect(con)
-        // When I disconnect, remove this device
-        .remove()
-        .then(() => {
-          console.log("Client was removed")
-        })
-        .catch((error) => {
-          printErrorMsg(error)
-        });
+    //   onDisconnect(con)
+    //     // When I disconnect, remove this device
+    //     .remove()
+    //     .then(() => {
+    //       console.log("Client was removed")
+    //     })
+    //     .catch((error) => {
+    //       printErrorMsg(error)
+    //     });
 
       // Add this device to my connections list
       // this value could contain info about the device or a timestamp too
@@ -192,17 +192,18 @@ export async function createGame(currentPlayerUID: string): Promise<string | nul
       player2ActionList: []  // Assuming these are initialized empty
     };
 
+    //console.log("fire",game)
     // Write the new game to the database
     await set(gameRef, game);
 
     // Set up onDisconnect to remove the game if this player is still the only one when they disconnect
-    onDisconnect(gameRef).remove();
+    //onDisconnect(gameRef).remove();
 
     // Write the player's in-game reference
     await set(playerInGameRef, { gameUID: newGameID });
 
     // Set up onDisconnect to remove the player's in-game status
-    onDisconnect(playerInGameRef).remove();
+    //onDisconnect(playerInGameRef).remove();
 
     console.log("New GameID", newGameID);
     return newGameID;
@@ -213,16 +214,33 @@ export async function createGame(currentPlayerUID: string): Promise<string | nul
 }
 
 
-export function readInGame(currentPlayerUID: string) {
-  onValue(getPlayerInGameRef(currentPlayerUID), (snapshot) => {
-    const data = snapshot.val();
-    console.log(data)
-  })
+// export async function readInGame(currentPlayerUID: string) {
+//   onValue(getPlayerInGameRef(currentPlayerUID), (snapshot) => {
+//     const data = snapshot.val();
+//     console.log(data)
+//   })
+// }
+
+export async function readInGame(currentPlayerUID: string): Promise<InGameRTBModel | null> {
+    const gameRef = getPlayerInGameRef(currentPlayerUID)//ref(database, `player/inGame/`);
+    try {
+      const snapshot = await get(gameRef);
+      if (snapshot.exists()) {
+        const data: InGameRTBModel = snapshot.val();
+        console.log(data);
+        return data; // Return the fetched game data
+      } else {
+        console.log(`No data found for ingame file with UID: ${currentPlayerUID}`);
+        return null; // Return null if no data found
+      }
+    } catch (error) {
+      console.error("Error reading game:", error);
+      return null; // Return null in case of error
+    }
 }
 
 export async function readGame(gameUID: string): Promise<gameRTBModel | null> {
   const gameRef = ref(database, `games/${gameUID}`);
-
   try {
     const snapshot = await get(gameRef);
     if (snapshot.exists()) {
@@ -256,6 +274,8 @@ export async function joinGame(gameUID: string, currentPlayerUID: string) {
   const gameRef = ref(database, `games/${gameUID}`);
   const playerInGameRef = ref(database, `players/${currentPlayerUID}/inGame`);
 
+  console.log("fire")
+
   readGame(gameUID).then((game)=>{
     createInGame(currentPlayerUID, gameUID,game!.turn)
     console.log(game)
@@ -271,7 +291,7 @@ export async function joinGame(gameUID: string, currentPlayerUID: string) {
       await set(playerInGameRef, { gameUID: gameUID });
 
       // Set up onDisconnect to possibly allow another player to join if this one disconnects
-      onDisconnect(playerInGameRef).remove();
+      //onDisconnect(playerInGameRef).remove();
       onDisconnect(gameRef).update({ player2UID: null }).then(() => {
         console.log("On disconnect setup complete");
       });
@@ -286,15 +306,15 @@ export async function joinGame(gameUID: string, currentPlayerUID: string) {
   }
 }
 
-export function listenToGameUpdates(gameUID: string, callback: (gameData: any) => void): void {
-  const gameRef = ref(database, `games/${gameUID}`);
+// export function listenToGameUpdates(gameUID: string, callback: (gameData: any) => void): void {
+//   const gameRef = ref(database, `games/${gameUID}`);
 
-  onValue(gameRef, (snapshot) => {
-    if (snapshot.exists()) {
-      const gameData = snapshot.val();
-      callback(gameData); // Invoke the callback with the game data
-    } else {
-      console.log(`No data found for game with UID: ${gameUID}`);
-    }
-  });
-}
+//   onValue(gameRef, (snapshot) => {
+//     if (snapshot.exists()) {
+//       const gameData = snapshot.val();
+//       callback(gameData); // Invoke the callback with the game data
+//     } else {
+//       console.log(`No data found for game with UID: ${gameUID}`);
+//     }
+//   });
+// }
