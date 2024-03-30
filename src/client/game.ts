@@ -35,6 +35,9 @@ export function initGame() {
     // Append the Pixi.js Application's view (canvas element) to the container
     if (canvas) {
         canvas.appendChild(app.view);
+        //Display Game ID
+        if(gameUID)
+        document.getElementById('GameUID')!.innerHTML = gameUID
     } else {
         console.error("Container element not found");
     }
