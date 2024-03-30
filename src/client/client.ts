@@ -43,6 +43,7 @@ export function initClient() {
       MyPlayer.UID = user.uid
       MyPlayer.Type = await assignMBTIToPlayer(user.uid)
       updatePlayerRef(user.uid, MyPlayer)
+      document.getElementById('GameID')!.innerHTML = user.uid
 
       gameParams.currentPlayerUID = user.uid
 

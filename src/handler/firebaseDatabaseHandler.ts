@@ -157,7 +157,7 @@ export function createConnection(UID: string) {
   return connectedRef;
 }
 
-export function createInGame(currentPlayerUID: string, GameUID: string, targetPlayerUID: string) {
+export async function createInGame(currentPlayerUID: string, GameUID: string, targetPlayerUID: string) : Promise<InGameRTBModel> {
 
   const inGame: InGameRTBModel = {
     OpponentUID: targetPlayerUID,
@@ -175,11 +175,14 @@ export function createInGame(currentPlayerUID: string, GameUID: string, targetPl
       console.log("Updated Succesfully")
     });
 
+    return inGame
+
 }
 
 export async function createGame(currentPlayerUID: string): Promise<string | null> {
   // Generate a new game ID
   const newGameID = push(child(ref(database), 'games')).key;
+  //const connectedRef = ref(database, '.info/connected');
 
   if (newGameID) {
     const gameRef = ref(database, `games/${newGameID}`);
@@ -197,13 +200,13 @@ export async function createGame(currentPlayerUID: string): Promise<string | nul
     await set(gameRef, game);
 
     // Set up onDisconnect to remove the game if this player is still the only one when they disconnect
-    //onDisconnect(gameRef).remove();
+    //onDisconnect(connectedRef).remove();
 
     // Write the player's in-game reference
     await set(playerInGameRef, { gameUID: newGameID });
 
     // Set up onDisconnect to remove the player's in-game status
-    //onDisconnect(playerInGameRef).remove();
+    //onDisconnect(connectedRef).remove();
 
     console.log("New GameID", newGameID);
     return newGameID;
