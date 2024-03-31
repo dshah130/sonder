@@ -18,6 +18,7 @@ import { printErrorMsg } from "./errorHandler";
 import { playerRTBModel } from "../interfaces/RTBModels/playersRTBModel";
 import { InGameRTBModel } from "../interfaces/RTBModels/inGameRTBModel";
 import { gameRTBModel, actionList } from "../interfaces/RTBModels/gamesRTBModel";
+import { getPlayerData } from "./firestoreHandler";
 
 let playersConnectedListCurrent: string[] = [];
 
@@ -183,14 +184,17 @@ export async function createGame(currentPlayerUID: string): Promise<string | nul
   // Generate a new game ID
   const newGameID = push(child(ref(database), 'games')).key;
   //const connectedRef = ref(database, '.info/connected');
+  const playerData = await getPlayerData(currentPlayerUID);
 
-  if (newGameID) {
+  if (newGameID && playerData) {
     const gameRef = ref(database, `games/${newGameID}`);
     const playerInGameRef = ref(database, `players/${currentPlayerUID}/inGame`);
+
 
     // Initialize the game model with the current player as player1
     const game: gameRTBModel = {
       turn: currentPlayerUID,
+      timer:playerData.Timer,
       player1ActionList: [], // Assuming these are initialized empty
       player2ActionList: []  // Assuming these are initialized empty
     };

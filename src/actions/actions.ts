@@ -1,5 +1,6 @@
 import { firestore } from "../firebase/firebase"; 
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { getPlayerData } from "../handler/firestoreHandler";
 
 // heal other player
 export async function healPlayer(targetPlayerUID: string) {
@@ -45,15 +46,18 @@ export async function healOwnPlayer(playerUID: string) {
     }
 }
 // damage other player
-export async function damagePlayer(targetPlayerUID: string) {
+export async function damagePlayer(targetPlayerUID: string,currentPlayerUID:string) {
     const patientRef = doc(firestore, "players", targetPlayerUID);
     
     try {
+
+        const currentPlayer = await getPlayerData(currentPlayerUID);
+
         // Get current state of players health
         const patientSnapshot = await getDoc(patientRef);
         if (patientSnapshot.exists()) {
             const patientData = patientSnapshot.data();
-            const newHealth = (patientData.Health || 0) - 1; 
+            const newHealth = (patientData.Health || 0) - (currentPlayer? currentPlayer.Damage: 1 ); 
             
             // Prevent health from going below 0
             if (newHealth >= 0) {
@@ -143,8 +147,8 @@ export async function lowerPlayerStats(targetPlayerUID: string) {
 }
 
 // raise player stats
-export async function raisePlayerStats(targetPlayerUID: string) {
-    const playerRef = doc(firestore, "players", targetPlayerUID);
+export async function raisePlayerStats(currentPlayerUID: string) {
+    const playerRef = doc(firestore, "players", currentPlayerUID);
     
     try {
         const docSnapshot = await getDoc(playerRef);
@@ -160,9 +164,9 @@ export async function raisePlayerStats(targetPlayerUID: string) {
             };
             
             await updateDoc(playerRef, updatedStats);
-            console.log(`Stats for player ${targetPlayerUID} have been increased by 0.5.`);
+            console.log(`Stats for player ${currentPlayerUID} have been increased by 0.5.`);
         } else {
-            console.log(`Player data for ${targetPlayerUID} not found.`);
+            console.log(`Player data for ${currentPlayerUID} not found.`);
         }
     } catch (error) {
         console.error("Error during raising player stats:", error);

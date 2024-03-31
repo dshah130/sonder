@@ -105,7 +105,7 @@ function setupUIListeners(targetPlayerUID: string, currentPlayerUID: string, gam
         readGame(gameUID).then((game)=>{
             if(game)
             if(game.turn == currentPlayerUID){
-                damagePlayer(targetPlayerUID);
+                damagePlayer(targetPlayerUID,currentPlayerUID);
                 changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
             }
         })
@@ -145,7 +145,7 @@ function setupUIListeners(targetPlayerUID: string, currentPlayerUID: string, gam
         readGame(gameUID).then((game)=>{
             if(game)
             if(game.turn == currentPlayerUID){
-                raisePlayerStats(targetPlayerUID);
+                raisePlayerStats(currentPlayerUID);
                 changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
             }
         })   

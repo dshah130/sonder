@@ -10,6 +10,7 @@ export interface Player {
     Health: number;
     Damage: number;
     Timer: number;
+    IsBlocking:boolean
 }
 
 export const BaseStatsPlayer : Player = {
@@ -22,5 +23,6 @@ export const BaseStatsPlayer : Player = {
     Type: "",
     Health: 5,
     Damage: 1,
-    Timer: 3
+    Timer: 3,
+    IsBlocking:false
 }
