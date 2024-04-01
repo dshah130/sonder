@@ -1,4 +1,3 @@
-import * as PIXI from 'pixi.js';
 import { healPlayer, healOwnPlayer, damagePlayer, decreaseDecisionTimer, increaseDecisionTimer, lowerPlayerStats, raisePlayerStats, setBlockForNextTurn } from '../actions/actions';
 import { getMyUserUID } from '../handler/firebaseAuthHandler'
 import { changeGameTurn, getPlayerInGameRef, createInGame, readInGame, createGame, readGame, addToActionList, getCurrenTurnRef } from '../handler/firebaseDatabaseHandler';
@@ -9,9 +8,57 @@ import { ActionEnum } from '../enums/actionEnum';
 import { onValue } from 'firebase/database';
 import { gameRTBModel } from '../interfaces/RTBModels/gamesRTBModel';
 import { getPlayerData } from '../handler/firestoreHandler';
+import Phaser from 'phaser';
 
-const app = new PIXI.Application<HTMLCanvasElement>({ width: 600, height: 600 })
-const graphics = new PIXI.Graphics();
+
+class MainScene extends Phaser.Scene {
+    constructor() {
+      super({ key: 'MainScene' });
+    }
+  
+    preload() {
+        this.load.atlas('filename', '/assets/spritesheet.png', '/assets/spritesheet.json');
+        console.log(this.textures.list);
+
+    }  
+    create() {
+        initGame();
+        // this.drawGraphics();
+        this.anims.create({
+            key: 'dead',
+            frames: this.anims.generateFrameNames('filename', {
+                prefix: 'Dead (',
+                suffix: ').png',
+                start: 1,
+                end: 15,
+                zeroPad: 1
+            }),
+            frameRate: 10,
+            repeat: 1
+        });
+        let characterSprite = this.add.sprite(0, 0, 'filename').play('dead');
+        characterSprite.play("dead");
+        console.log("works")
+    }
+    
+    // drawGraphics() {
+    //     let graphics = this.add.graphics();
+    //     graphics.fillStyle(0xFF0000, 1);
+    //     graphics.fillRect(50, 50, 100, 100);
+    // }
+ }
+  
+  // Phaser game configuration
+  const gameConfig = {
+    type: Phaser.AUTO,
+    width: 600,
+    height: 600,
+    parent: 'canvas', 
+    scene: [MainScene]
+  };
+
+  new Phaser.Game(gameConfig);
+
 
 export function initGame() {
 
@@ -35,14 +82,12 @@ export function initGame() {
     // graphics.endFill();
 
     // Add the rectangle to the stage
-    app.stage.addChild(graphics);
+    // app.stage.addChild(graphics);
 
-    // Get a reference to the HTML container where you want to append the canvas
+    // // Get a reference to the HTML container where you want to append the canvas
     const canvas = document.getElementById('canvas');
     // Append the Pixi.js Application's view (canvas element) to the container
     if (canvas) {
-        canvas.appendChild(app.view);
-        //Display Game ID
         if(gameParams.gameUID)
         document.getElementById('GameUID')!.innerHTML = gameParams.gameUID
     } else {

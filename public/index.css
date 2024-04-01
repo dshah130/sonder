@@ -1,5 +1,3 @@
-/* styles.css */
-
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -7,9 +5,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    background-color: #f0f0f0;
     flex-direction: column;
+    background-image: url('./background.jpg');
+    background-size: cover; 
 }
 
 .container {
@@ -19,22 +17,73 @@ body {
 h1 {
     font-size: 36px;
     margin-bottom: 20px;
+    color: #fff82e; 
+}
+
+button {
+    margin: 5px; 
+    padding: 10px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
 }
 
 a {
-    padding: 10px 20px;
-    font-size: 18px;
-    background-color: #007bff;
-    color: #fff;
+    margin: 5px; 
+    padding: 10px 10px;
+    font-size: 16px;
+    cursor: pointer;
     border: none;
     border-radius: 5px;
-    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
     background-color: #0056b3;
 }
+p {
+    color: #fff82e; /
+}
 
+select {
+    padding: 10px 10px;
+    font-size: 15px;
+    background-color: #f8f9fa;
+    color: #495057; 
+    border: 1px solid #ced4da; 
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none; 
+}
 
+select option {
+    font-size: 15px;
+    background-color: #fff; 
+    color: #495057; 
+}
 
+select option:hover {
+    background-color: #007bff; 
+    color: #fff; 
+}
 
+input[type="text"] {
+    padding: 10px 10px;
+    font-size: 15px;
+    background-color: #f8f9fa; 
+    color: #495057; 
+    border: 1px solid #ced4da; 
+    border-radius: 5px;
+    outline: none; 
+}
+
+input[type="text"]:focus {
+    border-color: #007bff; 
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
