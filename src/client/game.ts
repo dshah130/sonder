@@ -11,21 +11,67 @@ import { getPlayerData } from '../handler/firestoreHandler';
 import Phaser from 'phaser';
 
 
-class MainScene extends Phaser.Scene {
-    constructor() {
-      super({ key: 'MainScene' });
-    }
+// class MainScene extends Phaser.Scene {
+//     constructor() {
+//       super({ key: 'MainScene' });
+//     }
   
-    preload() {
-        this.load.atlas('filename', '/assets/spritesheet.png', '/assets/spritesheet.json');
-        console.log(this.textures.list);
+//     preload() {
+//         this.load.atlas('filename', '/assets/spritesheet.png', '/assets/spritesheet.json');
+//         console.log(this.textures.list);
 
-    }  
+//     }  
+//     create() {
+//         initGame();
+//         // this.drawGraphics();
+//         this.anims.create({
+//             key: 'dead',
+//             frames: this.anims.generateFrameNames('filename', {
+//                 prefix: 'Dead (',
+//                 suffix: ').png',
+//                 start: 1,
+//                 end: 15,
+//                 zeroPad: 1
+//             }),
+//             frameRate: 10,
+//             repeat: 1
+//         });
+//         let characterSprite = this.add.sprite(0, 0, 'filename').play('dead');
+//         characterSprite.play("dead");
+//         console.log("works")
+//     }
+    
+//     // drawGraphics() {
+//     //     let graphics = this.add.graphics();
+//     //     graphics.fillStyle(0xFF0000, 1);
+//     //     graphics.fillRect(50, 50, 100, 100);
+//     // }
+//  }
+
+ 
+
+class MyScene extends Phaser.Scene {
+    constructor() {
+        super({ key: 'MyScene' });
+    }
+
+    preload() {
+        // Load the sprite sheet image
+        // this.load.animation('gemData', 'assets/spritesheet.json');
+        this.load.atlas('filename', 'assets/spritesheet.png', 'assets/spritesheet.json');
+        // this.load.animation('gemData', 'assets/gems.json');
+        // this.load.atlas('gems', 'assets/gems.png', 'assets/gems.json');
+        // this.load.image('spritesheet', 'assets/spritesheet.png');
+    }
+
     create() {
-        initGame();
-        // this.drawGraphics();
+        // this.add.sprite(400, 100, 'gems').play('diamond');
+        // this.add.sprite(400, 200, 'gems').play('prism');
+        // this.add.sprite(400, 300, 'gems').play('ruby');
+        // this.add.sprite(400, 400, 'gems').play('square');
+
         this.anims.create({
-            key: 'dead',
+            key: 'Dead',
             frames: this.anims.generateFrameNames('filename', {
                 prefix: 'Dead (',
                 suffix: ').png',
@@ -36,28 +82,72 @@ class MainScene extends Phaser.Scene {
             frameRate: 10,
             repeat: 1
         });
-        let characterSprite = this.add.sprite(0, 0, 'filename').play('dead');
-        characterSprite.play("dead");
+
+        this.anims.create({
+            key: 'Idle',
+            frames: this.anims.generateFrameNames('filename', {
+                prefix: 'Idle (',
+                suffix: ').png',
+                start: 1,
+                end: 15,
+                zeroPad: 1
+            }),
+            frameRate: 10,
+            repeat: 1
+        });
+
+        this.anims.create({
+            key: 'Jump',
+            frames: this.anims.generateFrameNames('filename', {
+                prefix: 'Jump (',
+                suffix: ').png',
+                start: 1,
+                end: 15,
+                zeroPad: 1
+            }),
+            frameRate: 10,
+            repeat: 1
+        });
+
+        this.anims.create({
+            key: 'Run',
+            frames: this.anims.generateFrameNames('filename', {
+                prefix: 'Run (',
+                suffix: ').png',
+                start: 1,
+                end: 15,
+                zeroPad: 1
+            }),
+            frameRate: 10,
+            repeat: 1
+        });
+
+        //let characterSprite = this.add.sprite(400, 200, 'filename').play('dead');
+        // let characterSprite = this.add.sprite(400, 200, 'filename').play('jump');
+        // characterSprite.play("jump");
         console.log("works")
+
+        // Get the texture of the loaded image
+
+        // Once the sprite sheet is loaded, continue with the rest of your code...
     }
-    
-    // drawGraphics() {
-    //     let graphics = this.add.graphics();
-    //     graphics.fillStyle(0xFF0000, 1);
-    //     graphics.fillRect(50, 50, 100, 100);
-    // }
- }
-  
-  // Phaser game configuration
+}
+
+// const gameConfig = {
+//     type: Phaser.AUTO,
+//     width: 800,
+//     height: 600,
+//     scene: MyScene
+// };
+
+  //Phaser game configuration
   const gameConfig = {
     type: Phaser.AUTO,
-    width: 600,
+    width: 900,
     height: 600,
     parent: 'canvas', 
-    scene: [MainScene]
+    scene: [MyScene]
   };
-
-  new Phaser.Game(gameConfig);
 
 
 export function initGame() {
@@ -88,6 +178,7 @@ export function initGame() {
     const canvas = document.getElementById('canvas');
     // Append the Pixi.js Application's view (canvas element) to the container
     if (canvas) {
+        new Phaser.Game(gameConfig);
         if(gameParams.gameUID)
         document.getElementById('GameUID')!.innerHTML = gameParams.gameUID
     } else {
@@ -118,7 +209,7 @@ export function initGame() {
         setupUIListeners(gameParams);
         setupPlayerStatsListener(gameParams.currentPlayerUID, 'player1');
         setupPlayerStatsListener(gameParams.targetPlayerUID, 'player2');
-        syncGameTurn(gameParams)
+        //syncGameTurn(gameParams)
     }
 }
 

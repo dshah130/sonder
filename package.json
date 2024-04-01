@@ -33,6 +33,7 @@
     "@firebase/firestore": "^4.4.3",
     "bcrypt-ts": "^5.0.2",
     "firebase": "^10.8.1",
+    "phaser": "^3.80.1",
     "pixi.js": "^7.4.0",
     "scss": "^0.2.4",
     "socker.io": "^0.0.0-alpha-beta",

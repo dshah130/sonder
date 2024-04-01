@@ -9,7 +9,12 @@
 </head>
 
 <body>
-    <div id="timer"></div>
+    <div id="game">    
+        <div id="GameUID"></div>
+        <div id="canvas">
+        </div>
+        <div id="gameInput">
+            <div id="timer"></div>
     <div id="player1" class="player">
         <h2>Player 1: <span id="player1UID"></span></h2>
         <p>Level: <span id="player1Level"></span></p>
@@ -22,32 +27,29 @@
         <p>Type: <span id="player1Type"></span></p>
         <p>Timer: <span id="player1Timer"></span></p>
     </div>
-    <div id="canvas">
-        <div id="GameUID"></div>
-        <div id="PlayersTurn"></div>
-        <div id="actions">
-            <!-- <button id="healButton">Heal Other Player</button>
-            <button id="healOwnButton">Heal Your Player</button>
+    <div id="PlayersTurn"></div>
+    <div id="actions">
+        <!-- <button id="healButton">Heal Other Player</button>
+        <button id="healOwnButton">Heal Your Player</button>
+        <button id="damageButton">Damage</button>
+        <button id="decreaseTimerButton">Decrease Timer</button>
+        <button id="increaseTimerButton">Increase Timer</button>
+        <button id="lowerStatsButton">Lower Stats</button>
+        <button id="raiseStatsButton">Raise Stats</button>
+        <button id="blockButton">Block</button> -->
+        <div id="intimateActions">
             <button id="damageButton">Damage</button>
+            <button id="healButton">Heal Other Player</button>
             <button id="decreaseTimerButton">Decrease Timer</button>
-            <button id="increaseTimerButton">Increase Timer</button>
             <button id="lowerStatsButton">Lower Stats</button>
             <button id="raiseStatsButton">Raise Stats</button>
-            <button id="blockButton">Block</button> -->
-            <div id="intimateActions">
-                <button id="damageButton">Damage</button>
-                <button id="healButton">Heal Other Player</button>
-                <button id="decreaseTimerButton">Decrease Timer</button>
-                <button id="lowerStatsButton">Lower Stats</button>
-                <button id="raiseStatsButton">Raise Stats</button>
-            </div>
-            <div id="sensitiveActions">
-                <button id="blockButton">Block</button>
-                <button id="increaseTimerButton">Increase Timer</button>
-                <button id="healOwnButton">Heal Your Player</button>
-                <button id="damageButton">Counter Damage</button>
-                <button id="healButton">Heal Other Player</button>
-            </div>
+        </div>
+        <div id="sensitiveActions">
+            <button id="blockButton">Block</button>
+            <button id="increaseTimerButton">Increase Timer</button>
+            <button id="healOwnButton">Heal Your Player</button>
+            <button id="damageButton">Counter Damage</button>
+            <button id="healButton">Heal Other Player</button>
         </div>
     </div>
     <div id="player2" class="player">
@@ -62,6 +64,8 @@
             <p>Type: <span id="player2Type"></span></p>
             <p>Timer: <span id="player2Timer"></span></p>
         </div>
+    </div>
+    </div>
     <script src="../bundle.js"></script>
 </body>
 
