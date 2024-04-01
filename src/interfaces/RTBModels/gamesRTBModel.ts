@@ -1,11 +1,17 @@
-
+import { ActionEnum } from "../../enums/actionEnum"
+import { Player } from "../player"
 export interface gameRTBModel {
     turn:string,
     timer:number,
-    player1ActionList:string[],
-    player2ActionList:string[]
+    actionList:actionList[],
 }
 
+// export interface actionList{
+//     [key:string]:actionListItem,
+// }
 export interface actionList {
-    actionList:string[]
+
+    actionList:ActionEnum[]
+    startPlayerData:Player
 }
+

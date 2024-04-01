@@ -23,6 +23,6 @@ export const BaseStatsPlayer : Player = {
     Type: "",
     Health: 5,
     Damage: 1,
-    Timer: 3,
+    Timer: 5,
     IsBlocking:false
 }

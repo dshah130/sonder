@@ -17,8 +17,10 @@ import {
 import { printErrorMsg } from "./errorHandler";
 import { playerRTBModel } from "../interfaces/RTBModels/playersRTBModel";
 import { InGameRTBModel } from "../interfaces/RTBModels/inGameRTBModel";
-import { gameRTBModel, actionList } from "../interfaces/RTBModels/gamesRTBModel";
+import { actionList, gameRTBModel } from "../interfaces/RTBModels/gamesRTBModel";
 import { getPlayerData } from "./firestoreHandler";
+import { gameParams } from "../interfaces/broswerModels/gameParams";
+import { ActionEnum } from "../enums/actionEnum";
 
 let playersConnectedListCurrent: string[] = [];
 
@@ -180,28 +182,38 @@ export async function createInGame(currentPlayerUID: string, GameUID: string, ta
 
 }
 
-export async function createGame(currentPlayerUID: string): Promise<string | null> {
+export async function createGame(gameParams:gameParams): Promise<string | null> {
   // Generate a new game ID
   const newGameID = push(child(ref(database), 'games')).key;
   //const connectedRef = ref(database, '.info/connected');
-  const playerData = await getPlayerData(currentPlayerUID);
+  const currentplayerData = await getPlayerData(gameParams.currentPlayerUID);
+  const targetPlayerData = await getPlayerData(gameParams.targetPlayerUID);
 
-  if (newGameID && playerData) {
-    const gameRef = ref(database, `games/${newGameID}`);
-    const playerInGameRef = ref(database, `players/${currentPlayerUID}/inGame`);
-
+  if (!!newGameID && !!currentplayerData) {
+    const gameRef = ref(database, `games/${newGameID}/`);
+    const playerInGameRef = ref(database, `players/${gameParams.currentPlayerUID}/inGame`);
 
     // Initialize the game model with the current player as player1
+
+    // const currentplayerActionList:actionList = {
+    //   [gameParams.currentPlayerUID]:{
+    //     actionList: [],
+    //     startPlayerData: currentplayerData
+    //   }
+    // }
+
+    gameParams.gameUID = newGameID
+
     const game: gameRTBModel = {
-      turn: currentPlayerUID,
-      timer:playerData.Timer,
-      player1ActionList: [], // Assuming these are initialized empty
-      player2ActionList: []  // Assuming these are initialized empty
-    };
+      turn: gameParams.currentPlayerUID,
+      timer: currentplayerData.Timer,
+      actionList: []
+      }
 
     //console.log("fire",game)
     // Write the new game to the database
-    await set(gameRef, game);
+    await set(gameRef, game)
+    createActionList(gameParams)
 
     // Set up onDisconnect to remove the game if this player is still the only one when they disconnect
     //onDisconnect(connectedRef).remove();
@@ -247,7 +259,7 @@ export async function readInGame(currentPlayerUID: string): Promise<InGameRTBMod
 }
 
 export async function readGame(gameUID: string): Promise<gameRTBModel | null> {
-  const gameRef = ref(database, `games/${gameUID}`);
+  const gameRef = ref(database, `games/${gameUID}/`);
   try {
     const snapshot = await get(gameRef);
     if (snapshot.exists()) {
@@ -300,6 +312,103 @@ export function changeGameTurn(targetPlayerUID: string, currentPlayerUID: string
   })
 }
 
+export async function readActionList(gameParams:gameParams): Promise<ActionEnum[] | null> {
+  const actionListRef = ref(database, `games/${gameParams.gameUID}/${gameParams.currentPlayerUID}/actionList/`);
+  try {
+    const snapshot = await get(actionListRef);
+    if (snapshot.exists()) {
+      const data: ActionEnum[] = snapshot.val();
+      console.log(data);
+      return data; // Return the fetched game data
+    } else {
+      console.log(`No data found for game with UID: ${gameParams.gameUID}`);
+      return null; // Return null if no data found
+    }
+  } catch (error) {
+    console.error("Error reading game:", error);
+    return null; // Return null in case of error
+  }
+}
+
+export function addToActionList(gameParams:gameParams,action:ActionEnum){
+
+  interface UpdateActionList {
+    [key: string]: ActionEnum[]
+  }
+
+  const updates: UpdateActionList = {};
+
+  readActionList(gameParams).then((actionList)=>{
+    if(actionList){
+      
+      actionList.push(action)
+      const newActionList = actionList
+
+    //const updatedActionList: ActionEnum[] = actionList
+  
+    updates[`games/${gameParams.gameUID}/${gameParams.currentPlayerUID}/actionList/`] = newActionList;
+    update(ref(database), updates)
+    .then(() => {
+      console.log("Updated Action List Succesfully")
+    });
+    }
+    else{
+      updates[`games/${gameParams.gameUID}/${gameParams.currentPlayerUID}/actionList/`] = [action];
+      update(ref(database), updates)
+      .then(() => {
+        console.log("Updated Action List Succesfully")
+      });
+    }
+  })
+
+   // return updatedActionList
+
+}
+
+export async function createActionList(gameParams:gameParams){
+  const actionCurrentListRef = ref(database, `games/${gameParams.gameUID}/${gameParams.currentPlayerUID}/`);
+  const actionTargetListRef = ref(database, `games/${gameParams.gameUID}/${gameParams.currentPlayerUID}/`);
+
+  const currentplayerData = await getPlayerData(gameParams.currentPlayerUID);
+  const targetPlayerData = await getPlayerData(gameParams.targetPlayerUID);
+  interface UpdateActionList {
+    [key: string]: actionList
+  }
+
+
+  const updates: UpdateActionList = {};
+
+  if(currentplayerData){
+    await set(actionCurrentListRef, { actionList:[], startPlayerData: currentplayerData});
+
+    // const newActionList:actionList = {
+    //   actionList: [],
+    //   startPlayerData: currentplayerData
+    // }
+    // updates[`games/${gameParams.gameUID}/${gameParams.currentPlayerUID}/`] = newActionList;
+    
+  }
+
+  if(targetPlayerData){
+    await set(actionTargetListRef, { actionList:[], startPlayerData: targetPlayerData});
+    // const newActionList:actionList = {
+    //   actionList: [],
+    //   startPlayerData: targetPlayerData
+    // }
+    // updates[`games/${gameParams.gameUID}/${gameParams.targetPlayerUID}/`] = newActionList;
+    
+  }
+
+  // if(targetPlayerData){
+  //   updates[`games/${gameParams.gameUID}/${gameParams.targetPlayerUID}/`] = {actionList:[],currentplayerData} as ac;
+
+  // }
+  update(ref(database), updates)
+  .then(() => {
+    console.log("Updated Action List Succesfully")
+  });
+}
+
 // Modify the function to accept a callback
 export function getPlayerConnectionList(callback: (playersList: string[]) => void) {
   const playerConnectionListRef = ref(database, 'players');
@@ -349,6 +458,71 @@ export async function joinGame(gameUID: string, currentPlayerUID: string) {
   }
 }
 
+export function getCurrenTurnRef(gameParams:gameParams){
+  const currentTurnRef = ref(database, `games/${gameParams.gameUID}/turn/`);
+  return currentTurnRef
+}
+
+// export async function listenToTurnUpdate(gameParams:gameParams): Promise<gameRTBModel | null> {
+//   const currentTurnRef = ref(database, `games/${gameParams.gameUID}/turn/`);
+  
+  
+//   // onValue(currentTurnRef, (snapshot) => {
+//   //   const data:gameRTBModel = snapshot.val();
+//   //   if(data){
+//   //     if(data.turn == gameParams.currentPlayerUID){
+//   //       return data
+//   //     }
+//   //     else{
+//   //       return data
+//   //     }
+//   //   }
+//   // });
+//   // onValue(currentTurnRef, (snapshot) => {
+//   //   if(snapshot.exists()){
+//   //     const data:gameRTBModel = snapshot.val();
+//   //     if(data){
+//   //       if(data.turn == gameParams.currentPlayerUID){
+//   //         return data
+//   //       }
+//   //       else{
+//   //         return null          
+//   //       }
+//   //     }
+//   //   }
+//   // });
+
+//   // try {
+
+
+//   // } catch (error) {
+//   //   console.error("Error reading game:", error);
+//   //   return null; // Return null in case of error
+//   // }
+
+//   return new Promise<gameRTBModel | null>((resolve, reject) => {
+//     const currentTurnRef = ref(database, `games/${gameParams.gameUID}/turn/`);
+
+//     onValue(currentTurnRef, (snapshot) => {
+//       if (snapshot.exists()) {
+//         const data: gameRTBModel = snapshot.val();
+//         if (data) {
+//           if (data.turn == gameParams.currentPlayerUID) {
+//             resolve(data);
+//           } else {
+//             resolve(null);
+//           }
+//         }
+//       } else {
+//         resolve(null); // Resolve with null if snapshot doesn't exist
+//       }
+//     }, (error) => {
+//       console.error("Error listening to turn update:", error);
+//       reject(error); // Reject with error if there's an error in the asynchronous operation
+//     });
+//   });
+
+// }
 // export function listenToGameUpdates(gameUID: string, callback: (gameData: any) => void): void {
 //   const gameRef = ref(database, `games/${gameUID}`);
 

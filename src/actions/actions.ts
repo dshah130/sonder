@@ -2,6 +2,8 @@ import { firestore } from "../firebase/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { getPlayerData } from "../handler/firestoreHandler";
 
+// import {}
+
 // heal other player
 export async function healPlayer(targetPlayerUID: string) {
     const patientRef = doc(firestore, "players", targetPlayerUID);

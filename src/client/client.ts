@@ -10,14 +10,15 @@ import { printErrorMsg } from '../handler/errorHandler';
 import { updatePlayerRef, getPlayerRef } from '../handler/firestoreHandler';
 import { assignMBTIToPlayer } from "../handler/playerTypes"
 import { gameRTBModel } from '../interfaces/RTBModels/gamesRTBModel';
+import { gameParams } from '../interfaces/broswerModels/gameParams';
 
 export const MyPlayer: Player = BaseStatsPlayer;
 
-export const gameParams = {
+export const newgameParams : gameParams = {
   targetPlayerUID: "",
   currentPlayerUID: "",
   gameUID:""
-}
+} 
 
 function signInClient() {
   //=========SIGN IN
@@ -45,7 +46,7 @@ export function initClient() {
       updatePlayerRef(user.uid, MyPlayer)
       document.getElementById('GameID')!.innerHTML = user.uid
 
-      gameParams.currentPlayerUID = user.uid
+      newgameParams.currentPlayerUID = user.uid
 
       // Now fetch and use the player connections list
       getPlayerConnectionList((playersList) => {
@@ -78,29 +79,40 @@ export function updateDropdown(playersList: string[]) {
 
 function setupUIListeners() {
   document.getElementById("createGameBtn")?.addEventListener('click', async () => {
-    createGame(MyPlayer.UID).then((gameUID) => {
+    createGame(newgameParams).then((gameUID) => {
       if(gameUID){
-        gameParams.gameUID = gameUID
+        newgameParams.gameUID = gameUID
         console.log(`Game created with ID: ${gameUID}`);
       }
 
     }).then(()=>{
-      createInGame(gameParams.currentPlayerUID,gameParams.gameUID, gameParams.targetPlayerUID)
+      createInGame(newgameParams.currentPlayerUID,newgameParams.gameUID, newgameParams.targetPlayerUID)
 
     }).finally(()=>{
     // Format the URL with query parameters
+    const currentPlayerUID = newgameParams.currentPlayerUID
+    const targetPlayerUID = newgameParams.targetPlayerUID
+    const gameUID = newgameParams.gameUID
+
+
+    const sendGameModel = {
+      currentPlayerUID,
+      targetPlayerUID,
+      gameUID
+    }
     const baseUrl = '../game/index.html'; // Base URL of the target page
-    const queryString = new URLSearchParams(gameParams).toString(); // Convert parameters to query string
-    const url = `${baseUrl}?${queryString}`; // Combine base URL and query string
+    // const queryString = new URLSearchParams(sendGameModel).toString(); // Convert parameters to query string
+    // const url = `${baseUrl}?${queryString}`; // Combine base URL and query string
 
 
-      // listenToGameUpdates(gameUID, (gameData) => {
-        // Update the game UI based on `gameData`
+    //   // listenToGameUpdates(gameUID, (gameData) => {
+    //     // Update the game UI based on `gameData`
 
 
-      console.log(gameParams)
-      console.log(url)
-      window.location.href = url
+    //   console.log(newgameParams)
+    //   console.log(url)
+    //   window.location.href = url
+    goToGamePage(baseUrl);
     })
 
 
@@ -110,33 +122,48 @@ function setupUIListeners() {
   document.getElementById("joinGameBtn")?.addEventListener('click', async () => {
     const gameUIDInput = document.getElementById("gameUIDInput") as HTMLInputElement;
 
+
+
         // Format the URL with query parameters
-        gameParams.gameUID = gameUIDInput.value
-        console.log('triedgameid',gameParams.gameUID)
-        const baseUrl = '../game/index.html'; // Base URL of the target page
-        const queryString = new URLSearchParams(gameParams).toString(); // Convert parameters to query string
-        const url = `${baseUrl}?${queryString}`; // Combine base URL and query string
+        newgameParams.gameUID = gameUIDInput.value
+        console.log('triedgameid',newgameParams.gameUID)
+
+        // const currentPlayerUID = newgameParams.currentPlayerUID
+        // const targetPlayerUID = newgameParams.targetPlayerUID
+        // const gameUID = gameUIDInput.value
+      
+      
+        // const sendGameModel = {
+        //   currentPlayerUID,
+        //   targetPlayerUID,
+        //   gameUID
+        // }
+
+        // const baseUrl = '../game/index.html'; // Base URL of the target page
+        // const queryString = new URLSearchParams(sendGameModel).toString(); // Convert parameters to query string
+        // const url = `${baseUrl}?${queryString}`; // Combine base URL and query string
     
 
         //read game
         readGame(gameUIDInput.value).then((game)=>{
           console.log(game!.turn)
-          gameParams.targetPlayerUID = game!.turn;
-          createInGame(gameParams.currentPlayerUID,gameParams.gameUID,game!.turn)
+          newgameParams.targetPlayerUID = game!.turn;
+          createInGame(newgameParams.currentPlayerUID,newgameParams.gameUID,game!.turn)
         }).finally(()=>{
         // Format the URL with query parameters
         const baseUrl = '../game/index.html'; // Base URL of the target page
-        const queryString = new URLSearchParams(gameParams).toString(); // Convert parameters to query string
-        const url = `${baseUrl}?${queryString}`; // Combine base URL and query string
+        // const queryString = new URLSearchParams(newgameParams).toString(); // Convert parameters to query string
+        // const url = `${baseUrl}?${queryString}`; // Combine base URL and query string
 
 
-          // listenToGameUpdates(gameUID, (gameData) => {
-            // Update the game UI based on `gameData`
+        //   // listenToGameUpdates(gameUID, (gameData) => {
+        //     // Update the game UI based on `gameData`
 
 
-          console.log(gameParams)
-          console.log(url)
-          window.location.href = url
+        //   console.log(newgameParams)
+        //   console.log(url)
+          // window.location.href = url
+          goToGamePage(baseUrl);
         });
         //create in game
         // if (gameUIDInput && gameUIDInput.value) {
@@ -159,7 +186,7 @@ function setupUIListeners() {
     playersDropdown.addEventListener("change", () => {
       const selectedValue = playersDropdown.value
       console.log("Selcted Opponent Player:", selectedValue)
-      gameParams.targetPlayerUID = selectedValue
+      newgameParams.targetPlayerUID = selectedValue
     })
   }
 
@@ -168,6 +195,28 @@ function setupUIListeners() {
   })
 }
 
-function goToGamePage(){
+function goToGamePage(baseUrl:string){
 
+  const currentPlayerUID = newgameParams.currentPlayerUID
+  const targetPlayerUID = newgameParams.targetPlayerUID
+  const gameUID = newgameParams.gameUID
+
+
+  const sendGameModel = {
+    currentPlayerUID,
+    targetPlayerUID,
+    gameUID
+  }
+
+  const queryString = new URLSearchParams(sendGameModel).toString(); // Convert parameters to query string
+  const url = `${baseUrl}?${queryString}`; // Combine base URL and query string
+
+
+    // listenToGameUpdates(gameUID, (gameData) => {
+      // Update the game UI based on `gameData`
+
+
+    console.log(newgameParams)
+    console.log(url)
+    window.location.href = url
 }
