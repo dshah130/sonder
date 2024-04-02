@@ -24,6 +24,7 @@ import { ActionEnum } from "../enums/actionEnum";
 
 let playersConnectedListCurrent: string[] = [];
 
+const NUMBEROFTURNS:number = 9
 
 export function getPlayerConnectionRef(UID: string) {
   let playerConRef = ref(database, `players/${UID}/connections`);
@@ -207,7 +208,8 @@ export async function createGame(gameParams:gameParams): Promise<string | null> 
     const game: gameRTBModel = {
       turn: gameParams.currentPlayerUID,
       timer: currentplayerData.Timer,
-      actionList: []
+      actionList: [],
+      turnCount:0
       }
 
     //console.log("fire",game)
@@ -289,12 +291,15 @@ export function changeGameTurn(targetPlayerUID: string, currentPlayerUID: string
   readGame(gameUID).then((game)=>{
     if(game){
       // console.log("current turn:", game.turn)
+      game.turnCount += 1; //increment turn count
       if(game.turn == targetPlayerUID && game.turn!=="GAMEOVER"){
         //switch turn
         game.turn = currentPlayerUID
         console.log("=====================\nswitched turn to", game.turn)
       }else if(game.turn== "GAMEOVER"){
         console.log("=====================\nGAME OVER")
+      }else if(game.turnCount==NUMBEROFTURNS){
+        game.turn= "GAMEOVER"
       }
       else{
         //switch turn

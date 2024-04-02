@@ -4,6 +4,7 @@ export interface gameRTBModel {
     turn:string,
     timer:number,
     actionList:actionList[],
+    turnCount:number
 }
 
 // export interface actionList{

@@ -11,9 +11,7 @@ import { getPlayerData } from '../handler/firestoreHandler';
 import Phaser from 'phaser';
 
 class MyScene extends Phaser.Scene {
-    triggeCounterDamageAnimation() {
-        throw new Error('Method not implemented.');
-    }
+
 
     private healSprite!: Phaser.GameObjects.Sprite;
     private healYourSprite!: Phaser.GameObjects.Sprite;
@@ -28,6 +26,7 @@ class MyScene extends Phaser.Scene {
     private backgroundSprite!: Phaser.GameObjects.Sprite;
     private gameOverText!: Phaser.GameObjects.Text;
     private blockDamageSprite!: Phaser.GameObjects.Sprite;
+    private roundText!: Phaser.GameObjects.Text;
 
 
     constructor() {
@@ -302,6 +301,12 @@ class MyScene extends Phaser.Scene {
             fontFamily: 'Arial'
         }).setOrigin(0.5, 0.5).setAlpha(0);
 
+        this.roundText = this.add.text(this.game.canvas.width / 2, this.game.canvas.height / 2, `ROUND:${0}`, {
+            fontSize: '36px',
+            color: 'red',
+            fontFamily: 'Arial'
+        }).setOrigin(0.5, 0.5).setAlpha(0);
+
         // this.gameOverText = this.add.text(this.game.canvas.width / 2, this.game.canvas.height / 2, 'Game Over', {
         //     fontSize: '32px',
         //     color: '#fff',
@@ -366,6 +371,7 @@ class MyScene extends Phaser.Scene {
             this.blockDamageSprite.play('slash');
         }
     }
+
     // resizeGame(newGameWidth:number,newGameHeight:number){
     //     const width = window.innerWidth;
     //     const height = window.innerHeight;
@@ -383,7 +389,37 @@ class MyScene extends Phaser.Scene {
     //     // const scaleY = height // this.game.config.height;
 
     // }
+    triggerRoundDisplayAnimation(turnCount:number) {
 
+        this.roundText = this.add.text(this.game.canvas.width / 2, this.game.canvas.height / 2, `ROUND:${turnCount}`, {
+            fontSize: '36px',
+            color: 'red',
+            fontFamily: 'Arial'
+        }).setOrigin(0.5, 0.5).setAlpha(0);
+        // Tween to fade in the text
+        this.tweens.add({
+            targets: this.roundText,
+            alpha: 1,
+            duration: 1000,
+            ease: 'Linear',
+            repeat: 0,
+            onComplete: () => {
+                // Tween to fade out the text after it's faded in
+                this.tweens.add({
+                    targets: this.roundText,
+                    alpha: 0,
+                    duration: 1000,
+                    ease: 'Linear',
+                    repeat: 0,
+                    delay: 3000, // Delay before starting the fade-out animation
+                    onComplete: () => {
+                        // Optionally, you can restart the scene or do other actions here
+                    }
+                });
+            }
+        });
+        console.log("=======================\nGAME OVER\n=======================\n ")
+    }
 
     animateGameOverText() {
         // Tween to fade in the text
@@ -585,9 +621,14 @@ function setupUIListeners(game: Phaser.Game, gameParams:gameParams) {
 // Setup real time listener for player stats
 function setupPlayerStatsListener(game :Phaser.Game,playerUID: string, gameParams:gameParams,playerPrefix: string) {
     const playerRef = doc(firestore, "players", playerUID);
+    const scene = game.scene.getScene('MyScene') as MyScene;
 
     onSnapshot(playerRef, (docSnapshot) => {
         //console.log(`Received update for player: ${playerUID}`);
+        // readGame(gameParams.gameUID).then((game)=>{
+        //     if(game)
+        //     scene.triggerRoundDisplayAnimation(game.turnCount)
+        // });
         if (docSnapshot.exists()) {
             const playerData = docSnapshot.data();
             if(gameParams.currentPlayerUID==playerUID){
@@ -596,7 +637,6 @@ function setupPlayerStatsListener(game :Phaser.Game,playerUID: string, gameParam
             if(playerData){
                 if(playerData.Health == 0){
                     changeGameTurn("GAMEOVER",gameParams.currentPlayerUID,gameParams.gameUID)
-                    const scene = game.scene.getScene('MyScene') as MyScene;
                     scene.animateGameOverText()
                     console.log(`=====================\nGAMEOVER ${playerUID} cannot have health reduced below 0.`);
                     
