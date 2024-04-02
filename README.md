@@ -1,5 +1,4 @@
-# sonder-1
-Welcome to Sonder, our turn based game
+# sonder-1 Welcome to Sonder, our turn based game
 =================================================================================
 
 
