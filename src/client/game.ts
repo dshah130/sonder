@@ -1,4 +1,4 @@
-import { healPlayer, healOwnPlayer, damagePlayer, decreaseDecisionTimer, increaseDecisionTimer, lowerPlayerStats, raisePlayerStats, setBlockForNextTurn, applyActionIfNotBlocked } from '../actions/actions';
+import { healPlayer, healOwnPlayer, damagePlayer, decreaseDecisionTimer, increaseDecisionTimer, lowerPlayerStats, raisePlayerStats, setBlockForNextTurn, applyActionIfNotBlocked, resetBlockFlag } from '../actions/actions';
 import { getMyUserUID } from '../handler/firebaseAuthHandler'
 import { changeGameTurn, getPlayerInGameRef, createInGame, readInGame, createGame, readGame, addToActionList, getCurrenTurnRef } from '../handler/firebaseDatabaseHandler';
 import { firestore } from "../firebase/firebase";
@@ -695,6 +695,7 @@ function syncGameAction(game: Phaser.Game, gameParams:gameParams, syncGameAction
                     }
             
                     case ActionEnum.healSelf :{
+                        resetBlockFlag(gameParams.targetPlayerUID);
                         healOwnPlayer(gameParams.currentPlayerUID)
                         scene.triggerHealYourAnimation();
                         break;
@@ -749,6 +750,7 @@ function syncGameAction(game: Phaser.Game, gameParams:gameParams, syncGameAction
                     }
             
                     case ActionEnum.raiseStats :{
+                        resetBlockFlag(gameParams.targetPlayerUID);
                         raisePlayerStats(gameParams.currentPlayerUID);
                         scene.triggeRaiseStatsAnimation();
                         break;
@@ -768,6 +770,10 @@ function syncGameAction(game: Phaser.Game, gameParams:gameParams, syncGameAction
             }
             else{
                 console.log("=====================\nIt is not your turn")
+                if(gameRes.turn == "GAMEOVER"){
+                    scene.animateGameOverText();
+                    console.log("=====================\nMax amount of turns made")
+                }
             }
         }
     });

@@ -206,11 +206,12 @@ export async function applyActionIfNotBlocked(playerUID: string, targetPlayerUID
                 console.log(`=====================\nPlayer ${targetPlayerUID}'s block prevented the action.`);
                 // Optionally reset the blocking flag here or wait until the end of the turn
                 //await updateDoc(targetRef, { IsBlocking: false });
-                resetBlockFlag(targetPlayerUID)
+                resetBlockFlag(targetPlayerUID);
                 return false
             } else {
                 // Apply the action since there's no block
                 //await actionFunction(playerUID, targetPlayerUID);
+                resetBlockFlag(targetPlayerUID);
                 return true
             }
         } else {
