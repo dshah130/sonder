@@ -297,8 +297,8 @@ class MyScene extends Phaser.Scene {
   //Phaser game configuration
   const gameConfig = {
     type: Phaser.AUTO,
-    width: 900,
-    height: 600,
+    width: 1200,
+    height: 700,
     parent: 'canvas', 
     scene: [MyScene],
   };
