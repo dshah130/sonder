@@ -1,17 +1,19 @@
 # sonder-1
 
-Install and Execute Game:
+# Install and Execute Game:
 
 To install this game you will need to download the folder and then open it. Once opened, run "npm install" to install all package dependencies. 
 To execute this game you will need to run "npm run start-client" so the client side will start rendering the game and will connect to a real time multiplayer server. 
 
-How to Play:
+# How to Play:
 
-When you launch the game, you will be redirected to the home page where you will see your game id which is your own player id, a drop down of active users online, and another input box where you can join a game. If you are playing this game on 1 laptop, open up the same website http://localhost:9000/ on incognito mode so you are able to play against yourself. Once another user is online, you will be able to see their player id in the dropdown so you can select that. Player 1 will then be redirected to the game screen and will see the game id on the top of the page. Send this game id to the player you want to play against and then they will input this game id into the input box and join the game. You are officially both in the game and are able to play against each other!
+When you launch the game, you will be redirected to the home page where you will see your game id which is your own player id, a drop down of active users online, and another input box where you can join a game. If you are playing this game on 1 laptop, open up the same website http://localhost:9000/ on incognito mode so you are able to play against yourself.
 
-Once in the game, you can open up the console log on the screen and you will be able to see some dialog showing you whos turn it is. The player who created the game so Player 1 in this case will get the first move. From here, the player can do any of the given actions. Once a player's health gets to 0 the game is over. 
+Once another user is online, you will be able to see their player id in the dropdown so you can select that. Player 1 will then be redirected to the game screen and will see the game id on the top of the page. Send this game id to the player you want to play against and then they will input this game id into the input box and join the game. You are officially both in the game and are able to play against each other!
 
-Features: 
+Once in the game, OPEN up the console log on the screen and you will be able to see some dialog showing you whos turn it is. The player who created the game so Player 1 in this case will get the first move. From here, the player can do any of the given actions. Once a player's health gets to 0 the game is over. 
+
+# Features: 
 
 This game was created using Google's Firebase storage and database to store the servers databse on. This allows the server to be in real time and secure. This is where all of our data is stored so the game ID, player ID, who's turn it is, if the connection has been made on the client side, if the game has been loaded and is able to read in the data from the server side. This was our first feature that we implemented. 
 
