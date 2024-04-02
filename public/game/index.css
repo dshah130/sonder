@@ -112,6 +112,13 @@ p {
 h1{
     color:#fa9c84;
 }
-#GameUID{
+#GameUID,#player1UID, #player2UID{
     color: #b30000;
+}
+
+#player1Health,#player1Damage,#player1SE,#player1SL,
+#player1IE,#player1IL,#player1Type,
+#player2Health,#player2Damage,#player2SE,#player2SL,
+#player2IE,#player2IL,#player2Type{
+    color: white;
 }
