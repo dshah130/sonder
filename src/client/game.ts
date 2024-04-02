@@ -384,7 +384,7 @@ class MyScene extends Phaser.Scene {
                     duration: 1000,
                     ease: 'Linear',
                     repeat: 0,
-                    delay: 2000, // Delay before starting the fade-out animation
+                    delay: 5000, // Delay before starting the fade-out animation
                     onComplete: () => {
                         // Optionally, you can restart the scene or do other actions here
                     }
@@ -676,6 +676,9 @@ function syncGameAction(game: Phaser.Game, gameParams:gameParams, syncGameAction
             }
             //addToActionList(gameParams,syncGameAction)
             changeGameTurn(gameParams.targetPlayerUID,gameParams.currentPlayerUID,gameParams.gameUID);
+        }
+        else{
+            console.log("=====================\nIt is not your turn")
         }
     });
 }

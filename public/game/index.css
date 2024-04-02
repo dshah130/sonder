@@ -23,6 +23,12 @@ body {
     flex-direction: column;
 }
 
+#gameidDisplay{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
 #canvas {
     display: flex;
     flex-wrap: wrap;
