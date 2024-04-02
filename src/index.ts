@@ -1,4 +1,4 @@
-console.log('Hello, TypeScript and Webpack!');
+console.log('===WELCOME TO SONDER LOG===');
 
 import { initClient } from "../src/client/client";
 import { initGame } from "../src/client/game";

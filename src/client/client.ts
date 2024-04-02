@@ -38,7 +38,6 @@ export function initClient() {
   // After successful sign-in
   onAuthStateChanged(auth, async (user) => {
     if (user) {
-      console.log(user.uid);
       createConnection(user.uid); // Assuming createConnection sets up the necessary Firebase real-time database connections
 
       MyPlayer.UID = user.uid
@@ -51,7 +50,7 @@ export function initClient() {
       // Now fetch and use the player connections list
       getPlayerConnectionList((playersList) => {
         // Here, you have access to the updated players list
-        console.log("Players connected:", playersList);
+        //console.log("Players connected:", playersList);
         updateDropdown(playersList);
         // You can now do something with this list, like displaying it in the UI or making game-related decisions
       });

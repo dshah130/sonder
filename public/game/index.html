@@ -9,15 +9,18 @@
 </head>
 
 <body>
-    <div id="game">    
-        <div id="GameUID"></div>
+    <div id="game"> 
+        <div id="gameTitle">
+            <div><h1>WELCOME TO A GAME OF SONDER </h1></div>
+            <div>Your game id: <span id="GameUID"></span></div>
+        </div>   
         <div id="canvas">
         </div>
         <div id="gameInput">
-        <div id="timer"> </div>
+        <!-- <div id="timer"> </div> -->
+
         <div id="player1" class="player">
-            <h2>Player 1: <span id="player1UID"></span></h2>
-            <p>Level: <span id="player1Level"></span></p>
+            <h3>Player 1: <span id="player1UID"></span></h3>
             <p>Health: <span id="player1Health"></span></p>
             <p>Damage: <span id="player1Damage"></span></p>
             <p>SE: <span id="player1SE"></span></p>
@@ -25,24 +28,21 @@
             <p>IE: <span id="player1IE"></span></p>
             <p>IL: <span id="player1IL"></span></p>
             <p>Type: <span id="player1Type"></span></p>
-            <p>Timer: <span id="player1Timer"></span></p>
+            <!-- <p>Timer: <span id="player1Timer"></span></p> -->
         </div>
-        <div id="PlayersTurn"></div>
         <div class= action>
             <button id="damageButton">Damage</button>
             <button id="healButton">Heal Other Player</button>
-            <button id="decreaseTimerButton">Decrease Timer</button>
+            <!-- <button id="decreaseTimerButton">Decrease Timer</button> -->
             <button id="lowerStatsButton">Lower Stats</button>
             <button id="raiseStatsButton">Raise Stats</button>
             <button id="blockButton">Block</button>
-            <button id="increaseTimerButton">Increase Timer</button>
+            <!-- <button id="increaseTimerButton">Increase Timer</button> -->
             <button id="healOwnButton">Heal Your Player</button>
-            <button id="damageButton">Counter Damage</button>
-            <button id="healButton">Heal Other Player</button>
+            <!-- <button id="damageButton">Counter Damage</button> -->
         </div>
         <div id="player2" class="player">
-            <h2>Player 2: <span id="player2UID"></span></h2>
-            <p>Level: <span id="player2Level"></span></p>
+            <h3>Player 2: <span id="player2UID"></span></h3>
             <p>Health: <span id="player2Health"></span></p>
             <p>Damage: <span id="player2Damage"></span></p>
             <p>SE: <span id="player2SE"></span></p>
@@ -50,7 +50,7 @@
             <p>IE: <span id="player2IE"></span></p>
             <p>IL: <span id="player2IL"></span></p>
             <p>Type: <span id="player2Type"></span></p>
-            <p>Timer: <span id="player2Timer"></span></p>
+            <!-- <p>Timer: <span id="player2Timer"></span></p> -->
         </div>
     </div>
     </div>

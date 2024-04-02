@@ -33,13 +33,13 @@ export function getPlayerConnectionRef(UID: string) {
 
 export function getPlayerInGameRef(UID: string) {
   let playerInGameRef = ref(database, `players/${UID}/inGame`);
-  console.log(playerInGameRef)
+  //console.log(playerInGameRef)
   return playerInGameRef;
 }
 
 export function getGameRef(gameUID: string) {
   let playerInGameRef = ref(database, `games/${gameUID}`);
-  console.log(playerInGameRef)
+  //.log(playerInGameRef)
   return playerInGameRef;
 }
 
@@ -175,7 +175,7 @@ export async function createInGame(currentPlayerUID: string, GameUID: string, ta
 
   update(ref(database), updates)
     .then(() => {
-      console.log("Updated Succesfully")
+      console.log("Created Game State Succesfully")
     });
 
     return inGame
@@ -224,7 +224,7 @@ export async function createGame(gameParams:gameParams): Promise<string | null> 
     // Set up onDisconnect to remove the player's in-game status
     //onDisconnect(connectedRef).remove();
 
-    console.log("New GameID", newGameID);
+    console.log("Created New with GameID", newGameID);
     return newGameID;
   } else {
     console.error("Failed to create new game ID");
@@ -246,7 +246,7 @@ export async function readInGame(currentPlayerUID: string): Promise<InGameRTBMod
       const snapshot = await get(gameRef);
       if (snapshot.exists()) {
         const data: InGameRTBModel = snapshot.val();
-        console.log(data);
+        //console.log(data);
         return data; // Return the fetched game data
       } else {
         console.log(`No data found for ingame file with UID: ${currentPlayerUID}`);
@@ -264,7 +264,7 @@ export async function readGame(gameUID: string): Promise<gameRTBModel | null> {
     const snapshot = await get(gameRef);
     if (snapshot.exists()) {
       const data: gameRTBModel = snapshot.val();
-      console.log(data);
+      //console.log(`=====================\nIt is currently ${data.turn}'s turn`);
       return data; // Return the fetched game data
     } else {
       console.log(`No data found for game with UID: ${gameUID}`);
@@ -288,17 +288,18 @@ export function changeGameTurn(targetPlayerUID: string, currentPlayerUID: string
 
   readGame(gameUID).then((game)=>{
     if(game){
-      console.log("current turn:", game.turn)
-      if(game.turn == targetPlayerUID){
+      // console.log("current turn:", game.turn)
+      if(game.turn == targetPlayerUID && game.turn!=="GAMEOVER"){
         //switch turn
         game.turn = currentPlayerUID
-        console.log("switched turn", game.turn)
+        console.log("=====================\nswitched turn to", game.turn)
+      }else if(game.turn== "GAMEOVER"){
+        console.log("=====================\nGAME OVER")
       }
       else{
         //switch turn
         game.turn = targetPlayerUID
-        console.log("switched turn", game.turn)
-
+        console.log("=====================\nswitched turn to", game.turn)
       }
 
       updates[`games/${gameUID}`] = game;
@@ -306,9 +307,6 @@ export function changeGameTurn(targetPlayerUID: string, currentPlayerUID: string
     }
   }).finally(()=>{
     update(ref(database), updates)
-    .then(() => {
-      console.log("Updated Turn Succesfully")
-    });
   })
 }
 
@@ -343,8 +341,6 @@ export function addToActionList(gameParams:gameParams,action:ActionEnum){
       
       actionList.push(action)
       const newActionList = actionList
-
-    //const updatedActionList: ActionEnum[] = actionList
   
     updates[`games/${gameParams.gameUID}/${gameParams.currentPlayerUID}/actionList/`] = newActionList;
     update(ref(database), updates)
@@ -360,8 +356,6 @@ export function addToActionList(gameParams:gameParams,action:ActionEnum){
       });
     }
   })
-
-   // return updatedActionList
 
 }
 
@@ -381,28 +375,11 @@ export async function createActionList(gameParams:gameParams){
   if(currentplayerData){
     await set(actionCurrentListRef, { actionList:[], startPlayerData: currentplayerData});
 
-    // const newActionList:actionList = {
-    //   actionList: [],
-    //   startPlayerData: currentplayerData
-    // }
-    // updates[`games/${gameParams.gameUID}/${gameParams.currentPlayerUID}/`] = newActionList;
-    
   }
 
   if(targetPlayerData){
     await set(actionTargetListRef, { actionList:[], startPlayerData: targetPlayerData});
-    // const newActionList:actionList = {
-    //   actionList: [],
-    //   startPlayerData: targetPlayerData
-    // }
-    // updates[`games/${gameParams.gameUID}/${gameParams.targetPlayerUID}/`] = newActionList;
-    
   }
-
-  // if(targetPlayerData){
-  //   updates[`games/${gameParams.gameUID}/${gameParams.targetPlayerUID}/`] = {actionList:[],currentplayerData} as ac;
-
-  // }
   update(ref(database), updates)
   .then(() => {
     console.log("Updated Action List Succesfully")

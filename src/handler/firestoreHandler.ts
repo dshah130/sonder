@@ -19,6 +19,6 @@
 
    const playerSnapshot = await getDoc(playerRef);
    const patientData = playerSnapshot.data() as Player;
-   console.log("Player Data Retrieved:",patientData);
+   //console.log("Player Data Retrieved:",patientData);
    return patientData
 }

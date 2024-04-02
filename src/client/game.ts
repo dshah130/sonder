@@ -19,12 +19,18 @@ class MyScene extends Phaser.Scene {
     private blockSprite!: Phaser.GameObjects.Sprite;
     private increaseTimerSprite!: Phaser.GameObjects.Sprite;
     private decreaseTimerSprite!: Phaser.GameObjects.Sprite;
+    private boySprite!: Phaser.GameObjects.Sprite;
+    private girlSprite!: Phaser.GameObjects.Sprite;
+    private backgroundSprite!: Phaser.GameObjects.Sprite;
+    private gameOverText!: Phaser.GameObjects.Text;
+
 
     constructor() {
         super({ key: 'MyScene' });
     }
 
     preload() {
+        this.load.image("background",'assets/background.jpg');
         // Load the sprite sheet image
         this.load.atlas('filename', 'assets/spritesheet.png', 'assets/spritesheet.json');
         this.load.atlas('girl', 'assets/girl.png', 'assets/girl.json');
@@ -36,7 +42,7 @@ class MyScene extends Phaser.Scene {
         this.load.atlas('slash', 'assets/slash.png', 'assets/slash.json');
         this.load.atlas('slash2', 'assets/slash2.png', 'assets/slash2.json');
     }
-
+    // Get the size of the window
     create() {
         this.anims.create({
             key: 'boyDead',
@@ -61,7 +67,7 @@ class MyScene extends Phaser.Scene {
                 zeroPad: 1
             }),
             frameRate: 10,
-            repeat: 1
+            repeat: -1
         });
 
         this.anims.create({
@@ -113,7 +119,7 @@ class MyScene extends Phaser.Scene {
                 zeroPad: 1
             }),
             frameRate: 10,
-            repeat: 1
+            repeat: -1
         });
 
         this.anims.create({
@@ -232,17 +238,68 @@ class MyScene extends Phaser.Scene {
             frameRate: 10,
             repeat: 0
         });
+        const width = this.game.canvas.width;
+        const height = this.game.canvas.height;
+
+         this.backgroundSprite = this.add.sprite(width/2,height/2,'background')
+         this.backgroundSprite.scaleX *=0.2;
+         this.backgroundSprite.scaleY *=0.2;
+
+         this.healSprite = this.add.sprite(width/2, 300, 'water').setVisible(false);
          
-         this.healSprite = this.add.sprite(400, 300, 'water').setVisible(false);
-         this.healYourSprite = this.add.sprite(400, 300, 'water2').setVisible(false);
+         this.healYourSprite = this.add.sprite(width * 0.3, 300, 'water2').setVisible(false);
+         this.healYourSprite.scaleX *=0.25;
+         this.healYourSprite.scaleY *=0.25;
+         this.healYourSprite.x = width * 0.2;
+
          this.damageSprite = this.add.sprite(400, 300, 'fire').setVisible(false);
-         this.lowerStatsSprite = this.add.sprite(400, 300, 'fire2').setVisible(false);
-         this.raiseStatsSprite = this.add.sprite(400, 300, 'water3').setVisible(false);
-         this.blockSprite = this.add.sprite(400, 300, 'slash').setVisible(false);
+         this.damageSprite.x = width * 0.6;
+
+         this.lowerStatsSprite = this.add.sprite(width/2, 300, 'fire2').setVisible(false);
+         this.lowerStatsSprite.scaleX *=0.25;
+         this.lowerStatsSprite.scaleY *=0.25;
+         this.lowerStatsSprite.x = width * 0.75;
+         this.lowerStatsSprite.y = height * 0.90;
+
+         this.raiseStatsSprite = this.add.sprite(width/2, 300, 'water3').setVisible(false);
+         this.raiseStatsSprite.scaleX *=0.25;
+         this.raiseStatsSprite.scaleY *=0.25;
+         this.raiseStatsSprite.x = width * 0.25;
+         this.raiseStatsSprite.y = height * 0.90;
+         
+         this.blockSprite = this.add.sprite(width/2, 300, 'slash').setVisible(false);
+        //  this.blockSprite.scaleX *=0.5;
+        //  this.blockSprite.scaleY *=0.5;
+         this.blockSprite.x = width * 0.3;
+         
          this.increaseTimerSprite = this.add.sprite(400, 300, 'slash2').setVisible(false);
          this.decreaseTimerSprite = this.add.sprite(400, 300, 'slash2').setVisible(false);
+        this.boySprite = this.add.sprite(400, 300, 'boyIdle').play('boyIdle')
+        this.girlSprite = this.add.sprite(400, 300, 'girlIdle').play('girlIdle')
 
-        console.log("works")
+        //this.girlSprite = this.add.sprite(100, 300, 'girlIdle').play('girlIdle')
+         this.girlSprite.scaleX *= -0.4;
+         this.girlSprite.scaleY *= 0.4;
+         this.girlSprite.x = width * 0.7;
+        // this.girlSprite.scaleY *= 1;
+        this.boySprite.scaleX *= 0.4;
+        this.boySprite.scaleY *= 0.4;
+        this.boySprite.x = width * 0.3;
+
+        this.gameOverText = this.add.text(this.game.canvas.width / 2, this.game.canvas.height / 2, 'Game Over', {
+            fontSize: '36px',
+            color: 'red',
+            fontFamily: 'Arial'
+        }).setOrigin(0.5, 0.5).setAlpha(0);
+
+        // this.gameOverText = this.add.text(this.game.canvas.width / 2, this.game.canvas.height / 2, 'Game Over', {
+        //     fontSize: '32px',
+        //     color: '#fff',
+        //     fontFamily: 'Arial'
+        // }).setOrigin(0.5, 0.5);
+
+        console.log("=====================\nGame has finished loading")
+        console.log("============SONDER============")
     }
     triggerHealAnimation() {
         if (this.healSprite) {
@@ -292,20 +349,56 @@ class MyScene extends Phaser.Scene {
             this.decreaseTimerSprite.play('slash2');
         }
     }
-}
+    // resizeGame(newGameWidth:number,newGameHeight:number){
+    //     const width = window.innerWidth;
+    //     const height = window.innerHeight;
+        
+    //     // // Update sprite dimensions
+    //     this.boySprite.x = 300;
+    //     this.boySprite.y = 200;
+    //     // this.boySprite.scaleX *= newGameWidth/width;
+    //     // this.boySprite.scaleY *= newGameHeight/height;
+    //     this.boySprite.scaleX = newGameWidth/width;
+    //     this.boySprite.scaleY = newGameHeight/height;
+    //     // Optionally, you can scale the sprite
+    //     // based on the ratio of the new size to the original size
+    //     // const scaleX = width // this.game.config.width;
+    //     // const scaleY = height // this.game.config.height;
 
-  //Phaser game configuration
-  const gameConfig = {
-    type: Phaser.AUTO,
-    width: 1200,
-    height: 700,
-    parent: 'canvas', 
-    scene: [MyScene],
-  };
+    // }
+
+
+    animateGameOverText() {
+        // Tween to fade in the text
+        this.tweens.add({
+            targets: this.gameOverText,
+            alpha: 1,
+            duration: 1000,
+            ease: 'Linear',
+            repeat: 0,
+            onComplete: () => {
+                // Tween to fade out the text after it's faded in
+                this.tweens.add({
+                    targets: this.gameOverText,
+                    alpha: 0,
+                    duration: 1000,
+                    ease: 'Linear',
+                    repeat: 0,
+                    delay: 2000, // Delay before starting the fade-out animation
+                    onComplete: () => {
+                        // Optionally, you can restart the scene or do other actions here
+                    }
+                });
+            }
+        });
+        console.log("=======================\nGAME OVER\n=======================\n ")
+    }
+}
 
 export function initGame() {
 
-    console.log("init game")
+    console.log("Initiating Game")
+    console.log("=====================")
     // Get the query string from the URL
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -317,24 +410,62 @@ export function initGame() {
         gameUID: urlParams.get('gameUID') === null ? "" : urlParams.get('gameUID')
     } as gameParams
 
-    console.log(gameParams.targetPlayerUID, gameParams.currentPlayerUID, gameParams.gameUID) 
+    //console.log(gameParams.targetPlayerUID, gameParams.currentPlayerUID, gameParams.gameUID) 
 
     // // Get a reference to the HTML container where you want to append the canvas
     const canvas = document.getElementById('canvas');
-    const game = new Phaser.Game(gameConfig);
     // Append the Pixi.js Application's view (canvas element) to the container
     if (canvas) {
-        game
+        
         if(gameParams.gameUID)
         document.getElementById('GameUID')!.innerHTML = gameParams.gameUID
     } else {
-        console.error("Container element not found");
+        //console.error("Container element not found");
     }
+
+    // Get the size of the window
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    // Set the scale ratio for your game (e.g., 0.8 for 80% of the viewport size)
+    const wscaleRatio = 0.8;
+    const hscaleRatio = 0.3;
+    // Calculate the dimensions of the Phaser game canvas
+    const gameWidth = width * wscaleRatio;
+    const gameHeight = height * hscaleRatio;
+
+    //Phaser game configuration
+    const gameConfig = {
+        type: Phaser.AUTO,
+        // width: gameWidth,
+        // height: gameHeight,
+        width: 800,
+        height: 400,
+        parent: 'canvas', 
+        scene: [MyScene],
+    };
+
+    const game = new Phaser.Game(gameConfig);
+
+    // window.addEventListener('resize', () => {
+    //     const newWidth = window.innerWidth;
+    //     const newHeight = window.innerHeight;
+
+    //     const newGameWidth = newWidth * wscaleRatio;
+    //     const newGameHeight = newHeight * hscaleRatio;
+
+    //     //game.scale.resize(newGameWidth, newGameHeight);
+    //     const scene = game.scene.getScene('MyScene') as MyScene;
+    //     scene.resizeGame(newGameWidth,newGameHeight)
+    //     // game.scene.scenes.forEach((scene: Phaser.Scene) => {
+    //     // });
+
+    //     });
 
     if (gameParams) {
         setupUIListeners(game, gameParams);
-        setupPlayerStatsListener(gameParams.currentPlayerUID, 'player1');
-        setupPlayerStatsListener(gameParams.targetPlayerUID, 'player2');
+        setupPlayerStatsListener(game, gameParams.currentPlayerUID, gameParams,'player1');
+        setupPlayerStatsListener(game, gameParams.targetPlayerUID, gameParams ,'player2');
         //syncGameTurn(gameParams)
     }
 }
@@ -344,13 +475,11 @@ function setupUIListeners(game: Phaser.Game, gameParams:gameParams) {
     const healButton = document.getElementById('healButton');
     if (healButton) {
         healButton.addEventListener('click', () => {
-            const scene = game.scene.getScene('MyScene') as MyScene;
-            scene.triggerHealAnimation();
-            syncGameAction(gameParams,ActionEnum.healOther)
+            syncGameAction(game,gameParams,ActionEnum.healOther)
             
         });
     } else {
-        console.error('Heal button not found');
+        //console.error('Heal button not found');
     }
 
     document.getElementById('healOwnButton')?.addEventListener('click', () => {
@@ -361,9 +490,7 @@ function setupUIListeners(game: Phaser.Game, gameParams:gameParams) {
         //         changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
         //     }
         // })
-        const scene = game.scene.getScene('MyScene') as MyScene;
-        scene.triggerHealYourAnimation();
-        syncGameAction(gameParams,ActionEnum.healSelf)
+        syncGameAction(game,gameParams,ActionEnum.healSelf)
     });
 
     document.getElementById('damageButton')?.addEventListener('click', () => {
@@ -374,9 +501,7 @@ function setupUIListeners(game: Phaser.Game, gameParams:gameParams) {
         //         changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
         //     }
         // })
-        const scene = game.scene.getScene('MyScene') as MyScene;
-        scene.triggeDamageAnimation();
-        syncGameAction(gameParams,ActionEnum.damage)
+        syncGameAction(game,gameParams,ActionEnum.damage)
     });
 
     document.getElementById('decreaseTimerButton')?.addEventListener('click', () => {
@@ -387,9 +512,7 @@ function setupUIListeners(game: Phaser.Game, gameParams:gameParams) {
         //         changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
         //     }
         // })
-        const scene = game.scene.getScene('MyScene') as MyScene;
-        scene.triggeDecreaseTimerAnimation();
-        syncGameAction(gameParams,ActionEnum.decreaseTimer)
+        syncGameAction(game,gameParams,ActionEnum.decreaseTimer)
     });
 
     document.getElementById('increaseTimerButton')?.addEventListener('click', () => {
@@ -400,9 +523,7 @@ function setupUIListeners(game: Phaser.Game, gameParams:gameParams) {
 
         //     }
         // })
-        const scene = game.scene.getScene('MyScene') as MyScene;
-        scene.triggeIncreaseTimerAnimation();
-        syncGameAction(gameParams,ActionEnum.increaseTimer)
+        syncGameAction(game,gameParams,ActionEnum.increaseTimer)
    
     });
 
@@ -414,9 +535,7 @@ function setupUIListeners(game: Phaser.Game, gameParams:gameParams) {
         //         changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
         //     }
         // })
-        const scene = game.scene.getScene('MyScene') as MyScene;
-        scene.triggeLowerStatsAnimation();
-        syncGameAction(gameParams,ActionEnum.lowerStats)
+        syncGameAction(game,gameParams,ActionEnum.lowerStats)
       
     });
 
@@ -428,9 +547,8 @@ function setupUIListeners(game: Phaser.Game, gameParams:gameParams) {
         //         changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
         //     }
         // })
-        const scene = game.scene.getScene('MyScene') as MyScene;
-        scene.triggeRaiseStatsAnimation();
-        syncGameAction(gameParams,ActionEnum.raiseStats)
+
+        syncGameAction(game,gameParams,ActionEnum.raiseStats)
    
     });
 
@@ -442,23 +560,32 @@ function setupUIListeners(game: Phaser.Game, gameParams:gameParams) {
         //         changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
         //     }
         // })
-        const scene = game.scene.getScene('MyScene') as MyScene;
-        scene.triggeBlockAnimation();
-        syncGameAction(gameParams,ActionEnum.block)
-
+        syncGameAction(game,gameParams,ActionEnum.block)
     });
 
 }
 
 // Setup real time listener for player stats
-function setupPlayerStatsListener(playerUID: string, playerPrefix: string) {
+function setupPlayerStatsListener(game :Phaser.Game,playerUID: string, gameParams:gameParams,playerPrefix: string) {
     const playerRef = doc(firestore, "players", playerUID);
 
     onSnapshot(playerRef, (docSnapshot) => {
-        console.log(`Received update for player: ${playerUID}`);
+        //console.log(`Received update for player: ${playerUID}`);
         if (docSnapshot.exists()) {
             const playerData = docSnapshot.data();
-            console.log(`Data for player ${playerUID}:`, playerData);
+            if(gameParams.currentPlayerUID==playerUID){
+                console.log(`=====================\nYour stats have been updated:`);
+            }
+            if(playerData){
+                if(playerData.Health == 0){
+                    changeGameTurn("GAMEOVER",gameParams.currentPlayerUID,gameParams.gameUID)
+                    const scene = game.scene.getScene('MyScene') as MyScene;
+                    scene.animateGameOverText()
+                    console.log(`=====================\nGAMEOVER ${playerUID} cannot have health reduced below 0.`);
+                    
+                }
+            }
+            //console.log(`Data for player ${playerUID}:`, playerData);
             updatePlayerStatsUI(playerPrefix, playerData);
         } else {
             console.log(`No data found for player with UID: ${playerUID}`);
@@ -467,7 +594,7 @@ function setupPlayerStatsListener(playerUID: string, playerPrefix: string) {
 }
 
 function updatePlayerStatsUI(playerPrefix: string, data: any) {
-    const statKeys = ["UID", "Level", "Health", "Damage", "SE", "SL", "IE", "IL", "Type", "Timer"];
+    const statKeys = ["UID", "Health", "Damage", "SE", "SL", "IE", "IL", "Type"];
 
     statKeys.forEach((key) => {
         const element = document.getElementById(`${playerPrefix}${key}`);
@@ -482,12 +609,14 @@ function updatePlayerStatsUI(playerPrefix: string, data: any) {
                 element.textContent = (key === "Type") ? "N/A" : "0"; 
             }
         } else {
-            console.error(`Element not found for stat: ${key}, with prefix: ${playerPrefix}`);
+            //console.error(`Element not found for stat: ${key}, with prefix: ${playerPrefix}`);
         }
     });
 }
 
-function syncGameAction(gameParams:gameParams, syncGameAction:ActionEnum){
+function syncGameAction(game: Phaser.Game, gameParams:gameParams, syncGameAction:ActionEnum){
+    
+    const scene = game.scene.getScene('MyScene') as MyScene;
 
     readGame(gameParams.gameUID).then((game)=>{
         if(game)
@@ -496,41 +625,49 @@ function syncGameAction(gameParams:gameParams, syncGameAction:ActionEnum){
             switch (syncGameAction){
 
                 case ActionEnum.damage :{
-                    damagePlayer(gameParams.targetPlayerUID,gameParams.currentPlayerUID)
+                    damagePlayer(gameParams.targetPlayerUID,gameParams.currentPlayerUID,gameParams.gameUID)
+                    scene.triggeDamageAnimation();
                     break;
                 }
         
                 case ActionEnum.healSelf :{
                     healOwnPlayer(gameParams.currentPlayerUID)
+                    scene.triggerHealYourAnimation();
                     break;
                 }
         
                 case ActionEnum.healOther :{
                     healPlayer(gameParams.targetPlayerUID)
+                    scene.triggerHealAnimation();
                     break;
                 }
         
                 case ActionEnum.decreaseTimer :{
                     decreaseDecisionTimer(gameParams.targetPlayerUID)
+                    scene.triggeDecreaseTimerAnimation();
                     break;
                 }
         
                 case ActionEnum.increaseTimer :{
                     increaseDecisionTimer(gameParams.currentPlayerUID)
+                    scene.triggeIncreaseTimerAnimation();
                     break;
                 }
         
                 case ActionEnum.lowerStats :{
+                    scene.triggeLowerStatsAnimation();
                     lowerPlayerStats(gameParams.targetPlayerUID)
                 }
         
                 case ActionEnum.raiseStats :{
+                    scene.triggeRaiseStatsAnimation();
                     raisePlayerStats(gameParams.currentPlayerUID);
                     break;
                 }
                 
                 case ActionEnum.block :{
                     setBlockForNextTurn(gameParams.currentPlayerUID);
+                    scene.triggeBlockAnimation();
                     break;
                 }
         
@@ -539,7 +676,6 @@ function syncGameAction(gameParams:gameParams, syncGameAction:ActionEnum){
             }
             //addToActionList(gameParams,syncGameAction)
             changeGameTurn(gameParams.targetPlayerUID,gameParams.currentPlayerUID,gameParams.gameUID);
-
         }
     });
 }
@@ -605,3 +741,4 @@ async function startTimer(seconds: number) {
         // Handle error
     }
 }
+

@@ -1,7 +1,6 @@
 // Define the player interface
 export interface Player {
     UID: string;
-    Level: number;
     SE: number;
     SL: number;
     IE: number;
@@ -15,7 +14,6 @@ export interface Player {
 
 export const BaseStatsPlayer : Player = {
     UID: "",
-    Level: 0,
     SE: 0,
     SL: 0,
     IE: 0,

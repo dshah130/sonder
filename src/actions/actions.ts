@@ -1,6 +1,7 @@
 import { firestore } from "../firebase/firebase"; 
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { getPlayerData } from "../handler/firestoreHandler";
+import { changeGameTurn } from "../handler/firebaseDatabaseHandler";
 
 // import {}
 
@@ -17,7 +18,7 @@ export async function healPlayer(targetPlayerUID: string) {
             
             // Update health
             await updateDoc(patientRef, { Health: newHealth });
-            console.log(`Player ${targetPlayerUID} healed. New health: ${newHealth}`);
+            console.log(`=====================\nPlayer ${targetPlayerUID} healed. New health: ${newHealth}`);
         } else {
             console.log(`Player data for ${targetPlayerUID} not found.`);
         }
@@ -39,7 +40,7 @@ export async function healOwnPlayer(playerUID: string) {
             
             // Update health
             await updateDoc(patientRef, { Health: newHealth });
-            console.log(`Player ${playerUID} healed. New health: ${newHealth}`);
+            console.log(`=====================\nPlayer ${playerUID} healed. New health: ${newHealth}`);
         } else {
             console.log(`Player data for ${playerUID} not found.`);
         }
@@ -48,7 +49,7 @@ export async function healOwnPlayer(playerUID: string) {
     }
 }
 // damage other player
-export async function damagePlayer(targetPlayerUID: string,currentPlayerUID:string) {
+export async function damagePlayer(targetPlayerUID: string,currentPlayerUID:string,gameUID:string) {
     const patientRef = doc(firestore, "players", targetPlayerUID);
     
     try {
@@ -62,12 +63,18 @@ export async function damagePlayer(targetPlayerUID: string,currentPlayerUID:stri
             const newHealth = (patientData.Health || 0) - (currentPlayer? currentPlayer.Damage: 1 ); 
             
             // Prevent health from going below 0
-            if (newHealth >= 0) {
+            if (newHealth > 0) {
                 // Update health 
                 await updateDoc(patientRef, { Health: newHealth });
-                console.log(`Player ${targetPlayerUID} damaged. New health: ${newHealth}`);
+                console.log(`=====================\nPlayer ${targetPlayerUID} damaged. New health: ${newHealth}`);
             } else {
-                console.log(`Player ${targetPlayerUID} cannot have health reduced below 0.`);
+                console.log(`=====================\nPlayer ${targetPlayerUID} cannot have health reduced below 0.`);
+                changeGameTurn("GAMEOVER",currentPlayerUID,gameUID)
+                // const scene = game.scene.getScene('MyScene') as MyScene;
+                // scene.animateGameOverText()
+                console.log(`=====================\nGAMEOVER ${targetPlayerUID} cannot have health reduced below 0.`);
+                await updateDoc(patientRef, { Health: newHealth });
+
             }
         } else {
             console.log(`Player data for ${targetPlayerUID} not found.`);
@@ -139,7 +146,7 @@ export async function lowerPlayerStats(targetPlayerUID: string) {
             };
             
             await updateDoc(playerRef, updatedStats);
-            console.log(`Stats for player ${targetPlayerUID} have been decreased by 0.5.`);
+            console.log(`=====================\nStats for player ${targetPlayerUID} have been decreased by 0.5.`);
         } else {
             console.log(`Player data for ${targetPlayerUID} not found.`);
         }
@@ -166,7 +173,7 @@ export async function raisePlayerStats(currentPlayerUID: string) {
             };
             
             await updateDoc(playerRef, updatedStats);
-            console.log(`Stats for player ${currentPlayerUID} have been increased by 0.5.`);
+            console.log(`=====================\nStats for player ${currentPlayerUID} have been increased by 0.5.`);
         } else {
             console.log(`Player data for ${currentPlayerUID} not found.`);
         }
@@ -181,7 +188,7 @@ export async function setBlockForNextTurn(playerUID: string) {
 
     try {
         await updateDoc(playerRef, { isBlocking: true });
-        console.log(`Player ${playerUID} will block the next action.`);
+        console.log(`=====================\nPlayer ${playerUID} will block the next action.`);
     } catch (error) {
         console.error("Error setting block for next turn:", error);
     }
@@ -196,7 +203,7 @@ export async function applyActionIfNotBlocked(playerUID: string, targetPlayerUID
         if (docSnapshot.exists()) {
             const targetData = docSnapshot.data();
             if (targetData.isBlocking) {
-                console.log(`Player ${targetPlayerUID}'s block prevented the action.`);
+                console.log(`=====================\nPlayer ${targetPlayerUID}'s block prevented the action.`);
                 // Optionally reset the blocking flag here or wait until the end of the turn
                 await updateDoc(targetRef, { isBlocking: false });
             } else {
@@ -217,7 +224,7 @@ export async function resetBlockFlag(playerUID: string) {
 
     try {
         await updateDoc(playerRef, { isBlocking: false });
-        console.log(`Block reset for player ${playerUID}.`);
+        //console.log(`Block reset for player ${playerUID}.`);
     } catch (error) {
         console.error("Error resetting block:", error);
     }
