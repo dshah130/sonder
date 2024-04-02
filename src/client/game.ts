@@ -255,17 +255,17 @@ class MyScene extends Phaser.Scene {
          this.damageSprite = this.add.sprite(400, 300, 'fire').setVisible(false);
          this.damageSprite.x = width * 0.6;
 
-         this.lowerStatsSprite = this.add.sprite(width/2, 300, 'fire2').setVisible(false);
-         this.lowerStatsSprite.scaleX *=0.25;
-         this.lowerStatsSprite.scaleY *=0.25;
-         this.lowerStatsSprite.x = width * 0.75;
+         this.lowerStatsSprite = this.add.sprite(width/2, 300, 'water3').setVisible(false);
+         this.lowerStatsSprite.scaleX *=0.2;
+         this.lowerStatsSprite.scaleY *=0.2;
+         this.lowerStatsSprite.x = width * 0.70;
          this.lowerStatsSprite.y = height * 0.90;
 
-         this.raiseStatsSprite = this.add.sprite(width/2, 300, 'water3').setVisible(false);
-         this.raiseStatsSprite.scaleX *=0.25;
-         this.raiseStatsSprite.scaleY *=0.25;
-         this.raiseStatsSprite.x = width * 0.25;
-         this.raiseStatsSprite.y = height * 0.90;
+         this.raiseStatsSprite = this.add.sprite(width/2, 300, 'fire2').setVisible(false);
+         this.raiseStatsSprite.scaleX *=0.4;
+         this.raiseStatsSprite.scaleY *=0.4;
+         this.raiseStatsSprite.x = width * 0.2;
+         this.raiseStatsSprite.y = height * 0.93;
          
          this.blockSprite = this.add.sprite(width/2, 300, 'slash').setVisible(false);
         //  this.blockSprite.scaleX *=0.5;
@@ -322,13 +322,13 @@ class MyScene extends Phaser.Scene {
     triggeLowerStatsAnimation(){
         if (this.lowerStatsSprite) {
             this.lowerStatsSprite.setVisible(true);
-            this.lowerStatsSprite.play('fire2');
+            this.lowerStatsSprite.play('water3');
         }
     }
     triggeRaiseStatsAnimation(){
         if (this.raiseStatsSprite) {
             this.raiseStatsSprite.setVisible(true);
-            this.raiseStatsSprite.play('water3');
+            this.raiseStatsSprite.play('fire2');
         }
     }
     triggeBlockAnimation(){
@@ -618,130 +618,132 @@ function syncGameAction(game: Phaser.Game, gameParams:gameParams, syncGameAction
     
     const scene = game.scene.getScene('MyScene') as MyScene;
 
-    readGame(gameParams.gameUID).then((game)=>{
-        if(game)
-        if(game.turn == gameParams.currentPlayerUID){
+    readGame(gameParams.gameUID).then((gameRes)=>{
+        if(gameRes){
+            if(gameRes.turn == gameParams.currentPlayerUID){
 
-            switch (syncGameAction){
-
-                case ActionEnum.damage :{
-                    damagePlayer(gameParams.targetPlayerUID,gameParams.currentPlayerUID,gameParams.gameUID)
-                    scene.triggeDamageAnimation();
-                    break;
+                switch (syncGameAction){
+    
+                    case ActionEnum.damage :{
+                        damagePlayer(gameParams.targetPlayerUID,gameParams.currentPlayerUID,gameParams.gameUID)
+                        scene.triggeDamageAnimation();
+                        break;
+                    }
+            
+                    case ActionEnum.healSelf :{
+                        healOwnPlayer(gameParams.currentPlayerUID)
+                        scene.triggerHealYourAnimation();
+                        break;
+                    }
+            
+                    case ActionEnum.healOther :{
+                        healPlayer(gameParams.targetPlayerUID)
+                        scene.triggerHealAnimation();
+                        break;
+                    }
+            
+                    case ActionEnum.decreaseTimer :{
+                        decreaseDecisionTimer(gameParams.targetPlayerUID)
+                        scene.triggeDecreaseTimerAnimation();
+                        break;
+                    }
+            
+                    case ActionEnum.increaseTimer :{
+                        increaseDecisionTimer(gameParams.currentPlayerUID)
+                        scene.triggeIncreaseTimerAnimation();
+                        break;
+                    }
+            
+                    case ActionEnum.lowerStats :{
+                        lowerPlayerStats(gameParams.targetPlayerUID)
+                        scene.triggeLowerStatsAnimation();
+                        break;
+                    }
+            
+                    case ActionEnum.raiseStats :{
+                        raisePlayerStats(gameParams.currentPlayerUID);
+                        scene.triggeRaiseStatsAnimation();
+                        break;
+                    }
+                    
+                    case ActionEnum.block :{
+                        setBlockForNextTurn(gameParams.currentPlayerUID);
+                        scene.triggeBlockAnimation();
+                        break;
+                    }
+            
+                    default:
+                        console.log("Action Not Received")
                 }
-        
-                case ActionEnum.healSelf :{
-                    healOwnPlayer(gameParams.currentPlayerUID)
-                    scene.triggerHealYourAnimation();
-                    break;
-                }
-        
-                case ActionEnum.healOther :{
-                    healPlayer(gameParams.targetPlayerUID)
-                    scene.triggerHealAnimation();
-                    break;
-                }
-        
-                case ActionEnum.decreaseTimer :{
-                    decreaseDecisionTimer(gameParams.targetPlayerUID)
-                    scene.triggeDecreaseTimerAnimation();
-                    break;
-                }
-        
-                case ActionEnum.increaseTimer :{
-                    increaseDecisionTimer(gameParams.currentPlayerUID)
-                    scene.triggeIncreaseTimerAnimation();
-                    break;
-                }
-        
-                case ActionEnum.lowerStats :{
-                    scene.triggeLowerStatsAnimation();
-                    lowerPlayerStats(gameParams.targetPlayerUID)
-                }
-        
-                case ActionEnum.raiseStats :{
-                    scene.triggeRaiseStatsAnimation();
-                    raisePlayerStats(gameParams.currentPlayerUID);
-                    break;
-                }
-                
-                case ActionEnum.block :{
-                    setBlockForNextTurn(gameParams.currentPlayerUID);
-                    scene.triggeBlockAnimation();
-                    break;
-                }
-        
-                default:
-                    console.log("Action Not Received")
+                //addToActionList(gameParams,syncGameAction)
+                changeGameTurn(gameParams.targetPlayerUID,gameParams.currentPlayerUID,gameParams.gameUID);
             }
-            //addToActionList(gameParams,syncGameAction)
-            changeGameTurn(gameParams.targetPlayerUID,gameParams.currentPlayerUID,gameParams.gameUID);
-        }
-        else{
-            console.log("=====================\nIt is not your turn")
+            else{
+                console.log("=====================\nIt is not your turn")
+            }
         }
     });
 }
 
-function syncGameTurn(gameParams:gameParams){
+// function syncGameTurn(gameParams:gameParams){
 
-    const gameTurnCount:number = 0
+//     const gameTurnCount:number = 0
 
-    getCurrenTurnRef(gameParams)
-      onValue(getCurrenTurnRef(gameParams)
-      , (snapshot) => {
-    if(snapshot.exists()){
-      const data:string = snapshot.val();
-      if(data){
-        if(data == gameParams.currentPlayerUID){   
-            readGame(gameParams.gameUID).then((game)=>{
-                getPlayerData(data).then((playerData)=>{
-                    // setTimeout(() => {
-                    //     console.log("Timer completed"); // Action to perform when the timer completes
-                    //     changeGameTurn(gameParams.targetPlayerUID,gameParams.currentPlayerUID,gameParams.gameUID)
-                    //     // Perform any other actions here
-                    // }, playerData!.Timer * 1000);
-                    startTimer(playerData!.Timer).then(()=>{
-                        changeGameTurn(gameParams.targetPlayerUID,gameParams.currentPlayerUID,gameParams.gameUID)
-                    })
-                })
-            })
-        }
-        else{
-          return null          
-        }
-      }
-    }
-  });
-}
+//     getCurrenTurnRef(gameParams)
+//       onValue(getCurrenTurnRef(gameParams)
+//       , (snapshot) => {
+//     if(snapshot.exists()){
+//       const data:string = snapshot.val();
+//       if(data){
+//         if(data == gameParams.currentPlayerUID){   
+//             readGame(gameParams.gameUID).then((game)=>{
+//                 getPlayerData(data).then((playerData)=>{
+//                     // setTimeout(() => {
+//                     //     console.log("Timer completed"); // Action to perform when the timer completes
+//                     //     changeGameTurn(gameParams.targetPlayerUID,gameParams.currentPlayerUID,gameParams.gameUID)
+//                     //     // Perform any other actions here
+//                     // }, playerData!.Timer * 1000);
+//                     startTimer(playerData!.Timer).then(()=>{
+//                         changeGameTurn(gameParams.targetPlayerUID,gameParams.currentPlayerUID,gameParams.gameUID)
+//                     })
+//                 })
+//             })
+//         }
+//         else{
+//           return null          
+//         }
+//       }
+//     }
+//   });
+// }
 
-function updateTimer(seconds: number) {
-    const timerElement = document.getElementById('timer');
-    if (timerElement) {
-        timerElement.textContent = `Time Left: ${seconds} seconds`;
-    }
-}
+// function updateTimer(seconds: number) {
+//     const timerElement = document.getElementById('timer');
+//     if (timerElement) {
+//         timerElement.textContent = `Time Left: ${seconds} seconds`;
+//     }
+// }
 
-async function startTimer(seconds: number) {
-    try {
-        console.log(`Timer started for ${seconds} seconds`);
-        updateTimer(seconds);
+// async function startTimer(seconds: number) {
+//     try {
+//         console.log(`Timer started for ${seconds} seconds`);
+//         updateTimer(seconds);
 
-        // Start the timer using setTimeout
-        let remainingSeconds = seconds;
-        const timerInterval = setInterval(() => {
-            remainingSeconds--;
-            updateTimer(remainingSeconds);
+//         // Start the timer using setTimeout
+//         let remainingSeconds = seconds;
+//         const timerInterval = setInterval(() => {
+//             remainingSeconds--;
+//             updateTimer(remainingSeconds);
 
-            if (remainingSeconds <= 0) {
-                clearInterval(timerInterval);
-                console.log("Timer completed");
-                // Perform any actions you need when the timer completes
-            }
-        }, 1000); // Update timer every second (1000 milliseconds)
-    } catch (error) {
-        console.error("Error:", error);
-        // Handle error
-    }
-}
+//             if (remainingSeconds <= 0) {
+//                 clearInterval(timerInterval);
+//                 console.log("Timer completed");
+//                 // Perform any actions you need when the timer completes
+//             }
+//         }, 1000); // Update timer every second (1000 milliseconds)
+//     } catch (error) {
+//         console.error("Error:", error);
+//         // Handle error
+//     }
+// }
 

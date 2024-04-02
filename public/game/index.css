@@ -93,12 +93,13 @@ p {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
     transition: transform 0.2s, box-shadow 0.2s; 
     border-radius: 10px; 
-    display: grid;
-    justify-content: space-between; 
+    display: flex;
+    justify-content: space-evenly; 
     align-items: center; 
     /* padding: 10px; */
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 5px;
+    /* grid-template-columns: 1fr 1fr 1fr; */
+    /* gap: 5px; */
+    flex-direction: column;
 }
 
 #gameInput{
