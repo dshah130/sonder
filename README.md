@@ -1,8 +1,7 @@
 # sonder-1
-=================================================================================
 Welcome to Sonder, our turn based game
 =================================================================================
-To run the app,:
+
 
 npm i to install package dependencies
 
