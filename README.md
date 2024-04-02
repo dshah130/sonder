@@ -5,7 +5,7 @@ Install and Execute Game:
 To install this game you will need to download the folder and then open it. Once opened, run "npm install" to install all package dependencies. 
 To execute this game you will need to run "npm run start-client" so the client side will start rendering the game and will connect to a real time multiplayer server. 
 
-How to Play:
+#How to Play:
 
 When you launch the game, you will be redirected to the home page where you will see your game id which is your own player id, a drop down of active users online, and another input box where you can join a game. If you are playing this game on 1 laptop, open up the same website http://localhost:9000/ on incognito mode so you are able to play against yourself. Once another user is online, you will be able to see their player id in the dropdown so you can select that. Player 1 will then be redirected to the game screen and will see the game id on the top of the page. Send this game id to the player you want to play against and then they will input this game id into the input box and join the game. You are officially both in the game and are able to play against each other!
 
