@@ -8,7 +8,7 @@ import { Player, BaseStatsPlayer } from '../interfaces/player';
 //Handlers
 import { printErrorMsg } from '../handler/errorHandler';
 import { updatePlayerRef, getPlayerRef } from '../handler/firestoreHandler';
-import { assignMBTIToPlayer } from "../handler/playerTypes"
+import { assignMBTIToPlayer, getTypeBreakDown } from "../handler/playerTypes"
 import { gameRTBModel } from '../interfaces/RTBModels/gamesRTBModel';
 import { gameParams } from '../interfaces/broswerModels/gameParams';
 
@@ -42,6 +42,8 @@ export function initClient() {
 
       MyPlayer.UID = user.uid
       MyPlayer.Type = await assignMBTIToPlayer(user.uid)
+      getTypeBreakDown(MyPlayer.Type)
+
       updatePlayerRef(user.uid, MyPlayer)
       document.getElementById('GameID')!.innerHTML = "Game ID: " + user.uid
 

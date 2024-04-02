@@ -21,3 +21,7 @@ async function assignMBTIToPlayer(playerId: string): Promise<string> {
   return playerMBTI; 
 }
 export { assignMBTIToPlayer };
+
+export function getTypeBreakDown(MBTIType:string){
+  const types = MBTIType.split('')
+}
