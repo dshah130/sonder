@@ -109,3 +109,9 @@ p {
     justify-content: center;
     align-content: center;
 }
+h1{
+    color:#fa9c84;
+}
+#GameUID{
+    color: #b30000;
+}
