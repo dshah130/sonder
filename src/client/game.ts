@@ -1,4 +1,4 @@
-import { healPlayer, healOwnPlayer, damagePlayer, decreaseDecisionTimer, increaseDecisionTimer, lowerPlayerStats, raisePlayerStats, setBlockForNextTurn } from '../actions/actions';
+import { healPlayer, healOwnPlayer, damagePlayer, decreaseDecisionTimer, increaseDecisionTimer, lowerPlayerStats, raisePlayerStats, setBlockForNextTurn, applyActionIfNotBlocked } from '../actions/actions';
 import { getMyUserUID } from '../handler/firebaseAuthHandler'
 import { changeGameTurn, getPlayerInGameRef, createInGame, readInGame, createGame, readGame, addToActionList, getCurrenTurnRef } from '../handler/firebaseDatabaseHandler';
 import { firestore } from "../firebase/firebase";
@@ -11,6 +11,10 @@ import { getPlayerData } from '../handler/firestoreHandler';
 import Phaser from 'phaser';
 
 class MyScene extends Phaser.Scene {
+    triggeCounterDamageAnimation() {
+        throw new Error('Method not implemented.');
+    }
+
     private healSprite!: Phaser.GameObjects.Sprite;
     private healYourSprite!: Phaser.GameObjects.Sprite;
     private damageSprite!: Phaser.GameObjects.Sprite;
@@ -23,6 +27,7 @@ class MyScene extends Phaser.Scene {
     private girlSprite!: Phaser.GameObjects.Sprite;
     private backgroundSprite!: Phaser.GameObjects.Sprite;
     private gameOverText!: Phaser.GameObjects.Text;
+    private blockDamageSprite!: Phaser.GameObjects.Sprite;
 
 
     constructor() {
@@ -271,6 +276,11 @@ class MyScene extends Phaser.Scene {
         //  this.blockSprite.scaleX *=0.5;
         //  this.blockSprite.scaleY *=0.5;
          this.blockSprite.x = width * 0.3;
+
+         this.blockDamageSprite = this.add.sprite(width/2, 300, 'slash').setVisible(false);
+           this.blockDamageSprite.scaleX *= -1;
+         //  this.blockSprite.scaleY *=0.5;
+          this.blockDamageSprite.x = width * 0.7;
          
          this.increaseTimerSprite = this.add.sprite(400, 300, 'slash2').setVisible(false);
          this.decreaseTimerSprite = this.add.sprite(400, 300, 'slash2').setVisible(false);
@@ -347,6 +357,13 @@ class MyScene extends Phaser.Scene {
         if (this.decreaseTimerSprite) {
             this.decreaseTimerSprite.setVisible(true);
             this.decreaseTimerSprite.play('slash2');
+        }
+    }
+
+    triggeBlockedDamageAnimation() {
+        if (this.blockDamageSprite) {
+            this.blockDamageSprite.setVisible(true);
+            this.blockDamageSprite.play('slash');
         }
     }
     // resizeGame(newGameWidth:number,newGameHeight:number){
@@ -625,8 +642,15 @@ function syncGameAction(game: Phaser.Game, gameParams:gameParams, syncGameAction
                 switch (syncGameAction){
     
                     case ActionEnum.damage :{
-                        damagePlayer(gameParams.targetPlayerUID,gameParams.currentPlayerUID,gameParams.gameUID)
-                        scene.triggeDamageAnimation();
+                        applyActionIfNotBlocked(gameParams.currentPlayerUID,gameParams.targetPlayerUID).then((contineAction)=>{
+                            if(contineAction){
+                                damagePlayer(gameParams.targetPlayerUID,gameParams.currentPlayerUID,gameParams.gameUID)
+                                scene.triggeDamageAnimation();
+                            }else{
+                                scene.triggeBlockedDamageAnimation();
+                                
+                            }
+                        })
                         break;
                     }
             
@@ -637,14 +661,30 @@ function syncGameAction(game: Phaser.Game, gameParams:gameParams, syncGameAction
                     }
             
                     case ActionEnum.healOther :{
-                        healPlayer(gameParams.targetPlayerUID)
-                        scene.triggerHealAnimation();
+                        applyActionIfNotBlocked(gameParams.currentPlayerUID,gameParams.targetPlayerUID).then((contineAction)=>{
+                            if(contineAction){
+                                healPlayer(gameParams.targetPlayerUID)
+                                scene.triggerHealAnimation();
+                            }else{
+                                scene.triggeBlockedDamageAnimation();
+                                
+                            }
+                        })
+
                         break;
                     }
             
                     case ActionEnum.decreaseTimer :{
-                        decreaseDecisionTimer(gameParams.targetPlayerUID)
-                        scene.triggeDecreaseTimerAnimation();
+                        applyActionIfNotBlocked(gameParams.currentPlayerUID,gameParams.targetPlayerUID).then((contineAction)=>{
+                            if(contineAction){
+                                decreaseDecisionTimer(gameParams.targetPlayerUID)
+                                scene.triggeDecreaseTimerAnimation();
+                            }else{
+                                scene.triggeBlockedDamageAnimation();
+                                
+                            }
+                        })
+
                         break;
                     }
             
@@ -655,8 +695,16 @@ function syncGameAction(game: Phaser.Game, gameParams:gameParams, syncGameAction
                     }
             
                     case ActionEnum.lowerStats :{
-                        lowerPlayerStats(gameParams.targetPlayerUID)
-                        scene.triggeLowerStatsAnimation();
+                        applyActionIfNotBlocked(gameParams.currentPlayerUID,gameParams.targetPlayerUID).then((contineAction)=>{
+                            if(contineAction){
+                                lowerPlayerStats(gameParams.targetPlayerUID)
+                                scene.triggeLowerStatsAnimation();
+                            }else{
+                                scene.triggeBlockedDamageAnimation();
+                                
+                            }
+                        })
+
                         break;
                     }
             

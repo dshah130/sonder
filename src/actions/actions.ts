@@ -187,7 +187,7 @@ export async function setBlockForNextTurn(playerUID: string) {
     const playerRef = doc(firestore, "players", playerUID);
 
     try {
-        await updateDoc(playerRef, { isBlocking: true });
+        await updateDoc(playerRef, { IsBlocking: true });
         console.log(`=====================\nPlayer ${playerUID} will block the next action.`);
     } catch (error) {
         console.error("Error setting block for next turn:", error);
@@ -195,20 +195,23 @@ export async function setBlockForNextTurn(playerUID: string) {
 }
 
 // if player does not block
-export async function applyActionIfNotBlocked(playerUID: string, targetPlayerUID: string, actionFunction: Function) {
+export async function applyActionIfNotBlocked(playerUID: string, targetPlayerUID: string) {
     const targetRef = doc(firestore, "players", targetPlayerUID);
 
     try {
         const docSnapshot = await getDoc(targetRef);
         if (docSnapshot.exists()) {
             const targetData = docSnapshot.data();
-            if (targetData.isBlocking) {
+            if (targetData.IsBlocking) {
                 console.log(`=====================\nPlayer ${targetPlayerUID}'s block prevented the action.`);
                 // Optionally reset the blocking flag here or wait until the end of the turn
-                await updateDoc(targetRef, { isBlocking: false });
+                //await updateDoc(targetRef, { IsBlocking: false });
+                resetBlockFlag(targetPlayerUID)
+                return false
             } else {
                 // Apply the action since there's no block
-                await actionFunction(playerUID, targetPlayerUID);
+                //await actionFunction(playerUID, targetPlayerUID);
+                return true
             }
         } else {
             console.log(`Target player data for ${targetPlayerUID} not found.`);
@@ -223,7 +226,7 @@ export async function resetBlockFlag(playerUID: string) {
     const playerRef = doc(firestore, "players", playerUID);
 
     try {
-        await updateDoc(playerRef, { isBlocking: false });
+        await updateDoc(playerRef, { IsBlocking: false });
         //console.log(`Block reset for player ${playerUID}.`);
     } catch (error) {
         console.error("Error resetting block:", error);
