@@ -1,6 +1,6 @@
 # sonder-1
 
-Install and Execute Game:
+# Install and Execute Game:
 
 To install this game you will need to download the folder and then open it. Once opened, run "npm install" to install all package dependencies. 
 To execute this game you will need to run "npm run start-client" so the client side will start rendering the game and will connect to a real time multiplayer server. 
@@ -11,7 +11,7 @@ When you launch the game, you will be redirected to the home page where you will
 
 Once in the game, you can open up the console log on the screen and you will be able to see some dialog showing you whos turn it is. The player who created the game so Player 1 in this case will get the first move. From here, the player can do any of the given actions. Once a player's health gets to 0 the game is over. 
 
-Features: 
+# Features: 
 
 This game was created using Google's Firebase storage and database to store the servers databse on. This allows the server to be in real time and secure. This is where all of our data is stored so the game ID, player ID, who's turn it is, if the connection has been made on the client side, if the game has been loaded and is able to read in the data from the server side. This was our first feature that we implemented. 
 
