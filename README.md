@@ -7,9 +7,11 @@ To execute this game you will need to run "npm run start-client" so the client s
 
 # How to Play:
 
-When you launch the game, you will be redirected to the home page where you will see your game id which is your own player id, a drop down of active users online, and another input box where you can join a game. If you are playing this game on 1 laptop, open up the same website http://localhost:9000/ on incognito mode so you are able to play against yourself. Once another user is online, you will be able to see their player id in the dropdown so you can select that. Player 1 will then be redirected to the game screen and will see the game id on the top of the page. Send this game id to the player you want to play against and then they will input this game id into the input box and join the game. You are officially both in the game and are able to play against each other!
+When you launch the game, you will be redirected to the home page where you will see your game id which is your own player id, a drop down of active users online, and another input box where you can join a game. If you are playing this game on 1 laptop, open up the same website http://localhost:9000/ on incognito mode so you are able to play against yourself.
 
-Once in the game, you can open up the console log on the screen and you will be able to see some dialog showing you whos turn it is. The player who created the game so Player 1 in this case will get the first move. From here, the player can do any of the given actions. Once a player's health gets to 0 the game is over. 
+Once another user is online, you will be able to see their player id in the dropdown so you can select that. Player 1 will then be redirected to the game screen and will see the game id on the top of the page. Send this game id to the player you want to play against and then they will input this game id into the input box and join the game. You are officially both in the game and are able to play against each other!
+
+Once in the game, OPEN up the console log on the screen and you will be able to see some dialog showing you whos turn it is. The player who created the game so Player 1 in this case will get the first move. From here, the player can do any of the given actions. Once a player's health gets to 0 the game is over. 
 
 # Features: 
 
