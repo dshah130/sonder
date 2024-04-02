@@ -10,68 +10,36 @@ import { gameRTBModel } from '../interfaces/RTBModels/gamesRTBModel';
 import { getPlayerData } from '../handler/firestoreHandler';
 import Phaser from 'phaser';
 
-
-// class MainScene extends Phaser.Scene {
-//     constructor() {
-//       super({ key: 'MainScene' });
-//     }
-  
-//     preload() {
-//         this.load.atlas('filename', '/assets/spritesheet.png', '/assets/spritesheet.json');
-//         console.log(this.textures.list);
-
-//     }  
-//     create() {
-//         initGame();
-//         // this.drawGraphics();
-//         this.anims.create({
-//             key: 'dead',
-//             frames: this.anims.generateFrameNames('filename', {
-//                 prefix: 'Dead (',
-//                 suffix: ').png',
-//                 start: 1,
-//                 end: 15,
-//                 zeroPad: 1
-//             }),
-//             frameRate: 10,
-//             repeat: 1
-//         });
-//         let characterSprite = this.add.sprite(0, 0, 'filename').play('dead');
-//         characterSprite.play("dead");
-//         console.log("works")
-//     }
-    
-//     // drawGraphics() {
-//     //     let graphics = this.add.graphics();
-//     //     graphics.fillStyle(0xFF0000, 1);
-//     //     graphics.fillRect(50, 50, 100, 100);
-//     // }
-//  }
-
- 
-
 class MyScene extends Phaser.Scene {
+    private healSprite!: Phaser.GameObjects.Sprite;
+    private healYourSprite!: Phaser.GameObjects.Sprite;
+    private damageSprite!: Phaser.GameObjects.Sprite;
+    private lowerStatsSprite!: Phaser.GameObjects.Sprite;
+    private raiseStatsSprite!: Phaser.GameObjects.Sprite;
+    private blockSprite!: Phaser.GameObjects.Sprite;
+    private increaseTimerSprite!: Phaser.GameObjects.Sprite;
+    private decreaseTimerSprite!: Phaser.GameObjects.Sprite;
+
     constructor() {
         super({ key: 'MyScene' });
     }
 
     preload() {
         // Load the sprite sheet image
-        // this.load.animation('gemData', 'assets/spritesheet.json');
         this.load.atlas('filename', 'assets/spritesheet.png', 'assets/spritesheet.json');
-        // this.load.animation('gemData', 'assets/gems.json');
-        // this.load.atlas('gems', 'assets/gems.png', 'assets/gems.json');
-        // this.load.image('spritesheet', 'assets/spritesheet.png');
+        this.load.atlas('girl', 'assets/girl.png', 'assets/girl.json');
+        this.load.atlas('water', 'assets/water.png', 'assets/water.json');
+        this.load.atlas('water2', 'assets/water2.png', 'assets/water2.json');
+        this.load.atlas('fire', 'assets/fire.png', 'assets/fire.json');
+        this.load.atlas('fire2', 'assets/fire2.png', 'assets/fire2.json');
+        this.load.atlas('water3', 'assets/water3.png', 'assets/water3.json');
+        this.load.atlas('slash', 'assets/slash.png', 'assets/slash.json');
+        this.load.atlas('slash2', 'assets/slash2.png', 'assets/slash2.json');
     }
 
     create() {
-        // this.add.sprite(400, 100, 'gems').play('diamond');
-        // this.add.sprite(400, 200, 'gems').play('prism');
-        // this.add.sprite(400, 300, 'gems').play('ruby');
-        // this.add.sprite(400, 400, 'gems').play('square');
-
         this.anims.create({
-            key: 'Dead',
+            key: 'boyDead',
             frames: this.anims.generateFrameNames('filename', {
                 prefix: 'Dead (',
                 suffix: ').png',
@@ -84,7 +52,7 @@ class MyScene extends Phaser.Scene {
         });
 
         this.anims.create({
-            key: 'Idle',
+            key: 'boyIdle',
             frames: this.anims.generateFrameNames('filename', {
                 prefix: 'Idle (',
                 suffix: ').png',
@@ -97,7 +65,7 @@ class MyScene extends Phaser.Scene {
         });
 
         this.anims.create({
-            key: 'Jump',
+            key: 'boyJump',
             frames: this.anims.generateFrameNames('filename', {
                 prefix: 'Jump (',
                 suffix: ').png',
@@ -110,7 +78,7 @@ class MyScene extends Phaser.Scene {
         });
 
         this.anims.create({
-            key: 'Run',
+            key: 'boyRun',
             frames: this.anims.generateFrameNames('filename', {
                 prefix: 'Run (',
                 suffix: ').png',
@@ -122,23 +90,209 @@ class MyScene extends Phaser.Scene {
             repeat: 1
         });
 
-        //let characterSprite = this.add.sprite(400, 200, 'filename').play('dead');
-        // let characterSprite = this.add.sprite(400, 200, 'filename').play('jump');
-        // characterSprite.play("jump");
+        this.anims.create({
+            key: 'girlDead',
+            frames: this.anims.generateFrameNames('girl', {
+                prefix: 'Dead (',
+                suffix: ').png',
+                start: 1,
+                end: 30,
+                zeroPad: 1
+            }),
+            frameRate: 10,
+            repeat: 1
+        });
+
+        this.anims.create({
+            key: 'girlIdle',
+            frames: this.anims.generateFrameNames('girl', {
+                prefix: 'Idle (',
+                suffix: ').png',
+                start: 1,
+                end: 16,
+                zeroPad: 1
+            }),
+            frameRate: 10,
+            repeat: 1
+        });
+
+        this.anims.create({
+            key: 'girlJump',
+            frames: this.anims.generateFrameNames('girl', {
+                prefix: 'Jump (',
+                suffix: ').png',
+                start: 1,
+                end: 30,
+                zeroPad: 1
+            }),
+            frameRate: 10,
+            repeat: 1
+        });
+
+        this.anims.create({
+            key: 'girlRun',
+            frames: this.anims.generateFrameNames('girl', {
+                prefix: 'Run (',
+                suffix: ').png',
+                start: 1,
+                end: 20,
+                zeroPad: 1
+            }),
+            frameRate: 10,
+            repeat: 1
+        });
+
+        this.anims.create({
+            key: 'water',
+            frames: this.anims.generateFrameNames('water', {
+                start: 70000, 
+                end: 70013, 
+                zeroPad: 5, 
+                prefix: 'water', 
+                suffix: '.png' 
+            }),
+            frameRate: 10,
+            repeat: 0
+        });
+
+        this.anims.create({
+            key: 'water2',
+            frames: this.anims.generateFrameNames('water2', {
+                prefix: 'water',
+                suffix: '.png',
+                start: 90000,
+                end: 90041,
+                zeroPad: 5
+            }),
+            frameRate: 10,
+            repeat: 0
+        });
+
+        this.anims.create({
+            key: 'fire',
+            frames: this.anims.generateFrameNames('fire', {
+                prefix: '',
+                suffix: '.png',
+                start: 0,
+                end: 15,
+                zeroPad: 2
+            }),
+            frameRate: 10,
+            repeat: 0
+        });
+
+        this.anims.create({
+            key: 'fire2',
+            frames: this.anims.generateFrameNames('fire2', {
+                prefix: 'png_',
+                suffix: '.png',
+                start: 0,
+                end: 83,
+                zeroPad: 2
+            }),
+            frameRate: 10,
+            repeat: 0
+        });
+
+        this.anims.create({
+            key: 'water3',
+            frames: this.anims.generateFrameNames('water3', {
+                prefix: 'water',
+                suffix: '.png',
+                start: 40000,
+                end: 40015,
+                zeroPad: 5
+            }),
+            frameRate: 10,
+            repeat: 0
+        });
+
+        this.anims.create({
+            key: 'slash',
+            frames: this.anims.generateFrameNames('slash', {
+                prefix: 'skash_',
+                suffix: '.png',
+                start: 1,
+                end: 12,
+                zeroPad: 5
+            }),
+            frameRate: 10,
+            repeat: 0
+        });
+
+        this.anims.create({
+            key: 'slash2',
+            frames: this.anims.generateFrameNames('slash2', {
+                prefix: 'slash9_',
+                suffix: '.png',
+                start: 1,
+                end: 9,
+                zeroPad: 5
+            }),
+            frameRate: 10,
+            repeat: 0
+        });
+         
+         this.healSprite = this.add.sprite(400, 300, 'water').setVisible(false);
+         this.healYourSprite = this.add.sprite(400, 300, 'water2').setVisible(false);
+         this.damageSprite = this.add.sprite(400, 300, 'fire').setVisible(false);
+         this.lowerStatsSprite = this.add.sprite(400, 300, 'fire2').setVisible(false);
+         this.raiseStatsSprite = this.add.sprite(400, 300, 'water3').setVisible(false);
+         this.blockSprite = this.add.sprite(400, 300, 'slash').setVisible(false);
+         this.increaseTimerSprite = this.add.sprite(400, 300, 'slash2').setVisible(false);
+         this.decreaseTimerSprite = this.add.sprite(400, 300, 'slash2').setVisible(false);
+
         console.log("works")
-
-        // Get the texture of the loaded image
-
-        // Once the sprite sheet is loaded, continue with the rest of your code...
+    }
+    triggerHealAnimation() {
+        if (this.healSprite) {
+            this.healSprite.setVisible(true);
+            this.healSprite.play('water');
+        }
+    }
+    triggerHealYourAnimation() {
+        if (this.healYourSprite) {
+            this.healYourSprite.setVisible(true);
+            this.healYourSprite.play('water2');
+        }
+    }
+    triggeDamageAnimation(){
+        if (this.damageSprite) {
+            this.damageSprite.setVisible(true);
+            this.damageSprite.play('fire');
+        }
+    }
+    triggeLowerStatsAnimation(){
+        if (this.lowerStatsSprite) {
+            this.lowerStatsSprite.setVisible(true);
+            this.lowerStatsSprite.play('fire2');
+        }
+    }
+    triggeRaiseStatsAnimation(){
+        if (this.raiseStatsSprite) {
+            this.raiseStatsSprite.setVisible(true);
+            this.raiseStatsSprite.play('water3');
+        }
+    }
+    triggeBlockAnimation(){
+        if (this.blockSprite) {
+            this.blockSprite.setVisible(true);
+            this.blockSprite.play('slash');
+        }
+    }
+    triggeIncreaseTimerAnimation(){
+        if (this.increaseTimerSprite) {
+            this.increaseTimerSprite.setVisible(true);
+            this.increaseTimerSprite.play('slash2');
+        }
+    }
+    triggeDecreaseTimerAnimation(){
+        if (this.decreaseTimerSprite) {
+            this.decreaseTimerSprite.setVisible(true);
+            this.decreaseTimerSprite.play('slash2');
+        }
     }
 }
-
-// const gameConfig = {
-//     type: Phaser.AUTO,
-//     width: 800,
-//     height: 600,
-//     scene: MyScene
-// };
 
   //Phaser game configuration
   const gameConfig = {
@@ -146,9 +300,8 @@ class MyScene extends Phaser.Scene {
     width: 900,
     height: 600,
     parent: 'canvas', 
-    scene: [MyScene]
+    scene: [MyScene],
   };
-
 
 export function initGame() {
 
@@ -166,59 +319,35 @@ export function initGame() {
 
     console.log(gameParams.targetPlayerUID, gameParams.currentPlayerUID, gameParams.gameUID) 
 
-    // Draw a rectangle
-    // graphics.beginFill(0xFF0000); // Red color
-    // graphics.drawRect(0, 0, 100, 100); // x, y, width, height
-    // graphics.endFill();
-
-    // Add the rectangle to the stage
-    // app.stage.addChild(graphics);
-
     // // Get a reference to the HTML container where you want to append the canvas
     const canvas = document.getElementById('canvas');
+    const game = new Phaser.Game(gameConfig);
     // Append the Pixi.js Application's view (canvas element) to the container
     if (canvas) {
-        new Phaser.Game(gameConfig);
+        game
         if(gameParams.gameUID)
         document.getElementById('GameUID')!.innerHTML = gameParams.gameUID
     } else {
         console.error("Container element not found");
     }
-    
-    // getMyUserUID()
-    //     .then((uid) => {
-    //         console.log(uid, gameUID!, targetPlayerUID!)
-    //         //createInGame(uid, gameUID!, targetPlayerUID!)
-    //         // console.log("itworks", uid)
-    //         // //getPlayerInGameRef(uid)
-    //         // createGame(uid).then((gameUID) => {
-    //         //     if (gameUID && targetPlayerUID) {
-    //         //         createInGame(uid, gameUID, targetPlayerUID)
-    //         //     }
-    //         //     else {
-    //         //         console.log("Couldn't retirieve game uid")
-    //         //     }
-    //         // })
-    //         // //readInGame(uid);
-    //     })
-    //     .catch((error) => {
-    //         console.log(error)
-    //     })
 
     if (gameParams) {
-        setupUIListeners(gameParams);
+        setupUIListeners(game, gameParams);
         setupPlayerStatsListener(gameParams.currentPlayerUID, 'player1');
         setupPlayerStatsListener(gameParams.targetPlayerUID, 'player2');
         //syncGameTurn(gameParams)
     }
 }
 
-function setupUIListeners(gameParams:gameParams) {
-    
+function setupUIListeners(game: Phaser.Game, gameParams:gameParams) {
+
     const healButton = document.getElementById('healButton');
     if (healButton) {
         healButton.addEventListener('click', () => {
+            const scene = game.scene.getScene('MyScene') as MyScene;
+            scene.triggerHealAnimation();
             syncGameAction(gameParams,ActionEnum.healOther)
+            
         });
     } else {
         console.error('Heal button not found');
@@ -232,6 +361,8 @@ function setupUIListeners(gameParams:gameParams) {
         //         changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
         //     }
         // })
+        const scene = game.scene.getScene('MyScene') as MyScene;
+        scene.triggerHealYourAnimation();
         syncGameAction(gameParams,ActionEnum.healSelf)
     });
 
@@ -243,6 +374,8 @@ function setupUIListeners(gameParams:gameParams) {
         //         changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
         //     }
         // })
+        const scene = game.scene.getScene('MyScene') as MyScene;
+        scene.triggeDamageAnimation();
         syncGameAction(gameParams,ActionEnum.damage)
     });
 
@@ -254,6 +387,8 @@ function setupUIListeners(gameParams:gameParams) {
         //         changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
         //     }
         // })
+        const scene = game.scene.getScene('MyScene') as MyScene;
+        scene.triggeDecreaseTimerAnimation();
         syncGameAction(gameParams,ActionEnum.decreaseTimer)
     });
 
@@ -265,6 +400,8 @@ function setupUIListeners(gameParams:gameParams) {
 
         //     }
         // })
+        const scene = game.scene.getScene('MyScene') as MyScene;
+        scene.triggeIncreaseTimerAnimation();
         syncGameAction(gameParams,ActionEnum.increaseTimer)
    
     });
@@ -277,6 +414,8 @@ function setupUIListeners(gameParams:gameParams) {
         //         changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
         //     }
         // })
+        const scene = game.scene.getScene('MyScene') as MyScene;
+        scene.triggeLowerStatsAnimation();
         syncGameAction(gameParams,ActionEnum.lowerStats)
       
     });
@@ -289,6 +428,8 @@ function setupUIListeners(gameParams:gameParams) {
         //         changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
         //     }
         // })
+        const scene = game.scene.getScene('MyScene') as MyScene;
+        scene.triggeRaiseStatsAnimation();
         syncGameAction(gameParams,ActionEnum.raiseStats)
    
     });
@@ -301,8 +442,10 @@ function setupUIListeners(gameParams:gameParams) {
         //         changeGameTurn(targetPlayerUID,currentPlayerUID,gameUID);
         //     }
         // })
+        const scene = game.scene.getScene('MyScene') as MyScene;
+        scene.triggeBlockAnimation();
         syncGameAction(gameParams,ActionEnum.block)
-    
+
     });
 
 }
