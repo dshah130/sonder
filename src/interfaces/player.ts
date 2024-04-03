@@ -1,3 +1,4 @@
+import { pointScalar } from "../handler/playerTypes";
 // Define the player interface
 export interface Player {
     UID: string;
@@ -14,13 +15,13 @@ export interface Player {
 
 export const BaseStatsPlayer : Player = {
     UID: "",
-    SE: 0,
-    SL: 0,
-    IE: 0,
-    IL: 0,
+    SE: 0 *pointScalar,
+    SL: 0 *pointScalar,
+    IE: 0 *pointScalar,
+    IL: 0 *pointScalar,
     Type: "",
-    Health: 5,
-    Damage: 1,
+    Health: 5 *pointScalar,
+    Damage: 1 *pointScalar,
     Timer: 5,
     IsBlocking:false
 }

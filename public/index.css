@@ -130,3 +130,7 @@ input[type="text"]:focus {
     justify-content: space-evenly;
 }
 
+#player1UID{
+    visibility: hidden;
+}
+

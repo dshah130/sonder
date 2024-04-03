@@ -8,11 +8,12 @@ import { Player, BaseStatsPlayer } from '../interfaces/player';
 //Handlers
 import { printErrorMsg } from '../handler/errorHandler';
 import { updatePlayerRef, getPlayerRef } from '../handler/firestoreHandler';
-import { assignMBTIToPlayer, getTypeBreakDown } from "../handler/playerTypes"
+import { MBTI_TYPES, assignMBTIToPlayer, getNewPlayer, getTypeBreakDown } from "../handler/playerTypes"
 import { gameRTBModel } from '../interfaces/RTBModels/gamesRTBModel';
 import { gameParams } from '../interfaces/broswerModels/gameParams';
+import { updatePlayerStatsUI } from './game';
 
-export const MyPlayer: Player = BaseStatsPlayer;
+export let MyPlayer: Player = BaseStatsPlayer;
 
 export const newgameParams : gameParams = {
   targetPlayerUID: "",
@@ -40,14 +41,20 @@ export function initClient() {
     if (user) {
       createConnection(user.uid); // Assuming createConnection sets up the necessary Firebase real-time database connections
 
+      MyPlayer = getNewPlayer()
+
       MyPlayer.UID = user.uid
-      MyPlayer.Type = await assignMBTIToPlayer(user.uid)
-      getTypeBreakDown(MyPlayer.Type)
+
+      //getTypeBreakDown(MyPlayer)
+      updatePlayerStatsUI("player1",MyPlayer)
+
 
       updatePlayerRef(user.uid, MyPlayer)
       document.getElementById('GameID')!.innerHTML = "Game ID: " + user.uid
 
       newgameParams.currentPlayerUID = user.uid
+
+      //updateTypeDropdown(MBTI_TYPES)
 
       // Now fetch and use the player connections list
       getPlayerConnectionList((playersList) => {
@@ -78,6 +85,23 @@ export function updateDropdown(playersList: string[]) {
   }
 }
 
+// export function updateTypeDropdown(typeList: string[]) {
+//   const TypeUpdateInput = document.getElementById('TypeUpdate') as HTMLSelectElement | null;
+
+//   if (TypeUpdateInput) {
+//     TypeUpdateInput.length = 1; // Clear existing options except the first one
+
+//     typeList.forEach((t) => {
+//       if (t !== MyPlayer.Type) {
+//         const option = new Option(t, t); // Assuming playerUid is what you want to display
+//         TypeUpdateInput.add(option);
+//       }
+//     });
+//   } else {
+//     console.error("Dropdown element not found.");
+//   }
+// }
+
 function setupUIListeners() {
   document.getElementById("createGameBtn")?.addEventListener('click', async () => {
     createGame(newgameParams).then((gameUID) => {
@@ -94,7 +118,6 @@ function setupUIListeners() {
     const currentPlayerUID = newgameParams.currentPlayerUID
     const targetPlayerUID = newgameParams.targetPlayerUID
     const gameUID = newgameParams.gameUID
-
 
     const sendGameModel = {
       currentPlayerUID,
@@ -129,22 +152,6 @@ function setupUIListeners() {
         newgameParams.gameUID = gameUIDInput.value
         console.log('triedgameid',newgameParams.gameUID)
 
-        // const currentPlayerUID = newgameParams.currentPlayerUID
-        // const targetPlayerUID = newgameParams.targetPlayerUID
-        // const gameUID = gameUIDInput.value
-      
-      
-        // const sendGameModel = {
-        //   currentPlayerUID,
-        //   targetPlayerUID,
-        //   gameUID
-        // }
-
-        // const baseUrl = '../game/index.html'; // Base URL of the target page
-        // const queryString = new URLSearchParams(sendGameModel).toString(); // Convert parameters to query string
-        // const url = `${baseUrl}?${queryString}`; // Combine base URL and query string
-    
-
         //read game
         readGame(gameUIDInput.value).then((game)=>{
           console.log(game!.turn)
@@ -153,32 +160,9 @@ function setupUIListeners() {
         }).finally(()=>{
         // Format the URL with query parameters
         const baseUrl = '../game/index.html'; // Base URL of the target page
-        // const queryString = new URLSearchParams(newgameParams).toString(); // Convert parameters to query string
-        // const url = `${baseUrl}?${queryString}`; // Combine base URL and query string
 
-
-        //   // listenToGameUpdates(gameUID, (gameData) => {
-        //     // Update the game UI based on `gameData`
-
-
-        //   console.log(newgameParams)
-        //   console.log(url)
-          // window.location.href = url
           goToGamePage(baseUrl);
         });
-        //create in game
-        // if (gameUIDInput && gameUIDInput.value) {
-        //   await joinGame(gameUIDInput.value, MyPlayer.UID).then(()=>{
-        //     console.log(gameParams)
-        //     console.log(url)
-        //     window.location.href = url
-        //   })
-        //   // listenToGameUpdates(gameUIDInput.value, (gameData) => {
-        //   //   // Update the game UI based on `gameData`
-        //   // });
-
-        // }
-
 
   });
 
@@ -186,14 +170,23 @@ function setupUIListeners() {
   if (playersDropdown) {
     playersDropdown.addEventListener("change", () => {
       const selectedValue = playersDropdown.value
-      console.log("Selcted Opponent Player:", selectedValue)
+      console.log("Selected Opponent Player:", selectedValue)
       newgameParams.targetPlayerUID = selectedValue
     })
   }
 
-  document.getElementById("playGameBtn")?.addEventListener('click', () => {
+  // const TypeUpdateInput = document.getElementById("TypeUpdate") as HTMLSelectElement;
+  // if (TypeUpdateInput) {
+  //   TypeUpdateInput.addEventListener("change", () => {
+  //     const selectedValue = TypeUpdateInput.value
+  //     console.log("Selected Player Type:", selectedValue)
+  //     MyPlayer.Type = selectedValue
+  //   })
+  // }
 
-  })
+  // document.getElementById("TypeUpdateBtn")?.addEventListener('click', () => {
+
+  // })
 }
 
 function goToGamePage(baseUrl:string){

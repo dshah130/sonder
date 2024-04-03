@@ -621,7 +621,6 @@ function setupUIListeners(game: Phaser.Game, gameParams:gameParams) {
 // Setup real time listener for player stats
 function setupPlayerStatsListener(game :Phaser.Game,playerUID: string, gameParams:gameParams,playerPrefix: string) {
     const playerRef = doc(firestore, "players", playerUID);
-    const scene = game.scene.getScene('MyScene') as MyScene;
 
     onSnapshot(playerRef, (docSnapshot) => {
         //console.log(`Received update for player: ${playerUID}`);
@@ -637,7 +636,7 @@ function setupPlayerStatsListener(game :Phaser.Game,playerUID: string, gameParam
             if(playerData){
                 if(playerData.Health == 0){
                     changeGameTurn("GAMEOVER",gameParams.currentPlayerUID,gameParams.gameUID)
-                    scene.animateGameOverText()
+                    //scene.animateGameOverText()
                     console.log(`=====================\nGAMEOVER ${playerUID} cannot have health reduced below 0.`);
                     
                 }
@@ -650,7 +649,7 @@ function setupPlayerStatsListener(game :Phaser.Game,playerUID: string, gameParam
     });
 }
 
-function updatePlayerStatsUI(playerPrefix: string, data: any) {
+export function updatePlayerStatsUI(playerPrefix: string, data: any) {
     const statKeys = ["UID", "Health", "Damage", "SE", "SL", "IE", "IL", "Type"];
 
     statKeys.forEach((key) => {
@@ -704,7 +703,7 @@ function syncGameAction(game: Phaser.Game, gameParams:gameParams, syncGameAction
                     case ActionEnum.healOther :{
                         applyActionIfNotBlocked(gameParams.currentPlayerUID,gameParams.targetPlayerUID).then((contineAction)=>{
                             if(contineAction){
-                                healPlayer(gameParams.targetPlayerUID)
+                                healOwnPlayer(gameParams.targetPlayerUID)
                                 scene.triggerHealAnimation();
                             }else{
                                 scene.triggeBlockedDamageAnimation();
@@ -738,7 +737,7 @@ function syncGameAction(game: Phaser.Game, gameParams:gameParams, syncGameAction
                     case ActionEnum.lowerStats :{
                         applyActionIfNotBlocked(gameParams.currentPlayerUID,gameParams.targetPlayerUID).then((contineAction)=>{
                             if(contineAction){
-                                lowerPlayerStats(gameParams.targetPlayerUID)
+                                lowerPlayerStats(gameParams.targetPlayerUID,gameParams.currentPlayerUID)
                                 scene.triggeLowerStatsAnimation();
                             }else{
                                 scene.triggeBlockedDamageAnimation();
