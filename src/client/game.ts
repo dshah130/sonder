@@ -691,8 +691,8 @@ function syncGameAction(game: Phaser.Game, gameParams:gameParams, syncGameAction
                             }
                         })
                         break;
-                    }
-            
+                    } 
+               //YEs
                     case ActionEnum.healSelf :{
                         resetBlockFlag(gameParams.targetPlayerUID);
                         healOwnPlayer(gameParams.currentPlayerUID)
